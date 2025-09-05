@@ -867,6 +867,36 @@
             height: 180px !important;
         }
 
+        /* 큰 카드 스타일 */
+        .stats-grid-single {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .stat-card-large {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            min-height: 300px;
+        }
+
+        .stat-card-large h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .stat-card-large canvas {
+            max-height: 280px;
+            width: 100% !important;
+            height: 280px !important;
+        }
+
         /* 반응형 통계 */
         @media (max-width: 1200px) {
             .stats-grid {
@@ -888,6 +918,16 @@
             .stat-card canvas {
                 max-height: 140px;
                 height: 140px !important;
+            }
+
+            .stat-card-large {
+                padding: 16px;
+                min-height: 250px;
+            }
+            
+            .stat-card-large canvas {
+                max-height: 230px;
+                height: 230px !important;
             }
         }
 
@@ -2152,29 +2192,10 @@
                 <!-- 팀별 통계 -->
                 <div class="stats-section">
                     <h4>👥 팀별 분석</h4>
-                    <div class="stats-grid">
-                        <div class="stat-card">
+                    <div class="stats-grid-single">
+                        <div class="stat-card-large">
                             <h5>최강 팀 조합</h5>
                             <canvas id="teamComboChart"></canvas>
-                        </div>
-                        <div class="stat-card">
-                            <h5>점수 분포</h5>
-                            <canvas id="scoreDistributionChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 시간대별 통계 -->
-                <div class="stats-section">
-                    <h4>⏰ 활동 패턴</h4>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h5>요일별 경기</h5>
-                            <canvas id="dayOfWeekChart"></canvas>
-                        </div>
-                        <div class="stat-card">
-                            <h5>월별 활동</h5>
-                            <canvas id="monthlyActivityChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -3527,26 +3548,6 @@
                 console.error('팀 조합 차트 오류:', error);
             }
             
-            try {
-                updateScoreDistributionChart(filteredRecords);
-                console.log('점수 분포 차트 업데이트 완료');
-            } catch (error) {
-                console.error('점수 분포 차트 오류:', error);
-            }
-            
-            try {
-                updateDayOfWeekChart(filteredRecords);
-                console.log('요일별 차트 업데이트 완료');
-            } catch (error) {
-                console.error('요일별 차트 오류:', error);
-            }
-            
-            try {
-                updateMonthlyActivityChart(filteredRecords);
-                console.log('월별 활동 차트 업데이트 완료');
-            } catch (error) {
-                console.error('월별 활동 차트 오류:', error);
-            }
         }
 
         // 승률 차트 업데이트
