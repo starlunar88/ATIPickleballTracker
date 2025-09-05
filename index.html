@@ -2173,12 +2173,12 @@
                 <!-- 팀별 통계 -->
                 <div class="stats-section">
                     <h4>👥 팀별 분석</h4>
-                    <div class="stats-grid">
-                        <div class="stat-card">
+                    <div class="stats-grid-single">
+                        <div class="stat-card-large">
                             <h5>🏆 최강 팀 조합</h5>
                             <canvas id="teamComboChart"></canvas>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card-large">
                             <h5>😅 최약 팀 조합</h5>
                             <canvas id="worstTeamComboChart"></canvas>
                         </div>
@@ -3666,34 +3666,21 @@
             window.worstTeamComboChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: worstTeams.map(([team, stats]) => `${team} (${Math.round(stats.wins / stats.total * 100)}%)`),
+                    labels: worstTeams.map(([team, stats]) => `${team}`),
                     datasets: [{
                         label: '승률',
                         data: worstTeams.map(([team, stats]) => Math.round(stats.wins / stats.total * 100)),
-                        backgroundColor: [
-                            'rgba(239, 68, 68, 0.8)',
-                            'rgba(245, 101, 101, 0.8)',
-                            'rgba(252, 165, 165, 0.8)',
-                            'rgba(254, 202, 202, 0.8)',
-                            'rgba(254, 226, 226, 0.8)',
-                            'rgba(254, 242, 242, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(239, 68, 68, 1)',
-                            'rgba(245, 101, 101, 1)',
-                            'rgba(252, 165, 165, 1)',
-                            'rgba(254, 202, 202, 1)',
-                            'rgba(254, 226, 226, 1)',
-                            'rgba(254, 242, 242, 1)'
-                        ],
+                        backgroundColor: '#ef4444',
+                        borderColor: '#dc2626',
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: {
+                        x: {
                             beginAtZero: true,
                             max: 100,
                             ticks: {
@@ -3834,7 +3821,7 @@
             window.teamComboChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: topTeams.map(([team, stats]) => `${team} (${Math.round(stats.wins / stats.total * 100)}%)`),
+                    labels: topTeams.map(([team, stats]) => `${team}`),
                     datasets: [{
                         label: '승률',
                         data: topTeams.map(([team, stats]) => Math.round(stats.wins / stats.total * 100)),
