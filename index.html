@@ -840,39 +840,66 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
         }
 
         .stat-card {
             background: white;
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             border: 1px solid #e5e7eb;
+            min-height: 200px;
         }
 
         .stat-card h5 {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: #374151;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             text-align: center;
         }
 
         .stat-card canvas {
-            max-height: 250px;
+            max-height: 180px;
+            width: 100% !important;
+            height: 180px !important;
         }
 
         /* 반응형 통계 */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 12px;
             }
             
             .stat-card {
-                padding: 16px;
+                padding: 12px;
+                min-height: 160px;
+            }
+            
+            .stat-card canvas {
+                max-height: 140px;
+                height: 140px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stat-card {
+                padding: 10px;
+                min-height: 140px;
+            }
+            
+            .stat-card canvas {
+                max-height: 120px;
+                height: 120px !important;
             }
         }
 
@@ -1751,8 +1778,8 @@
                 <div class="filter-section">
                     <div class="period-tabs">
                         <button class="period-tab active" data-period="today" onclick="selectStatsPeriod('today')">오늘</button>
-                        <button class="period-tab" data-period="thisweek" onclick="selectStatsPeriod('thisweek')">이번주</button>
-                        <button class="period-tab" data-period="lastweek" onclick="selectStatsPeriod('lastweek')">지난주</button>
+                        <button class="period-tab" data-period="1week" onclick="selectStatsPeriod('1week')">1주</button>
+                        <button class="period-tab" data-period="2week" onclick="selectStatsPeriod('2week')">2주</button>
                         <button class="period-tab" data-period="month" onclick="selectStatsPeriod('month')">한달</button>
                         <button class="period-tab" data-period="all" onclick="selectStatsPeriod('all')">전체</button>
                     </div>
@@ -2244,6 +2271,8 @@
                 renderMembersPage();
             } else if (pageName === 'statistics') {
                 renderStatisticsPage();
+            } else if (pageName === 'analytics') {
+                renderAnalyticsPage();
             }
         }
 
@@ -2902,20 +2931,12 @@
                     const recordDate = new Date(record.date);
                     return recordDate >= today && recordDate < tomorrow;
                 });
-            } else if (selectedPeriod === 'thisweek') {
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const dayOfWeek = today.getDay();
-                const startOfWeek = new Date(today.getTime() - dayOfWeek * 24 * 60 * 60 * 1000);
-                filtered = filtered.filter(record => new Date(record.date) >= startOfWeek);
-            } else if (selectedPeriod === 'lastweek') {
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const dayOfWeek = today.getDay();
-                const startOfThisWeek = new Date(today.getTime() - dayOfWeek * 24 * 60 * 60 * 1000);
-                const startOfLastWeek = new Date(startOfThisWeek.getTime() - 7 * 24 * 60 * 60 * 1000);
-                filtered = filtered.filter(record => {
-                    const recordDate = new Date(record.date);
-                    return recordDate >= startOfLastWeek && recordDate < startOfThisWeek;
-                });
+            } else if (selectedPeriod === '1week') {
+                const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => new Date(record.date) >= oneWeekAgo);
+            } else if (selectedPeriod === '2week') {
+                const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => new Date(record.date) >= twoWeeksAgo);
             } else if (selectedPeriod === 'month') {
                 const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
                 filtered = filtered.filter(record => new Date(record.date) >= thirtyDaysAgo);
@@ -2992,12 +3013,14 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    aspectRatio: 1,
                     plugins: {
                         legend: {
                             position: 'bottom',
                             labels: {
-                                padding: 10,
-                                font: { size: 10 }
+                                padding: 8,
+                                font: { size: 9 },
+                                boxWidth: 12
                             }
                         }
                     }
@@ -3050,11 +3073,18 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    aspectRatio: 1.5,
                     scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                stepSize: 1
+                                stepSize: 1,
+                                font: { size: 9 }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { size: 9 }
                             }
                         }
                     },
