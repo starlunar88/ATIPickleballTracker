@@ -3420,6 +3420,13 @@
         function renderAnalyticsPage() {
             console.log('renderAnalyticsPage 호출됨');
             
+            // Chart.js 라이브러리 확인
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js 라이브러리가 로드되지 않았습니다');
+                return;
+            }
+            console.log('Chart.js 라이브러리 로드됨');
+            
             // 전체 통계 업데이트
             const totalGamesElement = document.getElementById('total-games');
             const totalMembersElement = document.getElementById('total-members');
@@ -3552,7 +3559,7 @@
             const ctx = canvas.getContext('2d');
             
             // 기존 차트 제거
-            if (window.winRateChart) {
+            if (window.winRateChart && typeof window.winRateChart.destroy === 'function') {
                 window.winRateChart.destroy();
             }
             
@@ -3627,7 +3634,7 @@
             }
             const ctx = canvas.getContext('2d');
             
-            if (window.participationChart) {
+            if (window.participationChart && typeof window.participationChart.destroy === 'function') {
                 window.participationChart.destroy();
             }
             
@@ -3701,7 +3708,7 @@
             }
             const ctx = canvas.getContext('2d');
             
-            if (window.teamComboChart) {
+            if (window.teamComboChart && typeof window.teamComboChart.destroy === 'function') {
                 window.teamComboChart.destroy();
             }
             
@@ -3777,7 +3784,7 @@
             }
             const ctx = canvas.getContext('2d');
             
-            if (window.scoreDistributionChart) {
+            if (window.scoreDistributionChart && typeof window.scoreDistributionChart.destroy === 'function') {
                 window.scoreDistributionChart.destroy();
             }
             
@@ -3836,7 +3843,7 @@
             }
             const ctx = canvas.getContext('2d');
             
-            if (window.dayOfWeekChart) {
+            if (window.dayOfWeekChart && typeof window.dayOfWeekChart.destroy === 'function') {
                 window.dayOfWeekChart.destroy();
             }
             
@@ -3893,7 +3900,7 @@
             }
             const ctx = canvas.getContext('2d');
             
-            if (window.monthlyActivityChart) {
+            if (window.monthlyActivityChart && typeof window.monthlyActivityChart.destroy === 'function') {
                 window.monthlyActivityChart.destroy();
             }
             
