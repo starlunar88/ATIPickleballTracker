@@ -903,6 +903,146 @@
             }
         }
 
+        /* 시상식 반응형 스타일 */
+        @media (max-width: 768px) {
+            .medal-podium {
+                height: 150px;
+                gap: 4px;
+            }
+            
+            .podium-place {
+                min-width: 60px;
+                padding: 12px 8px 16px;
+            }
+            
+            .podium-place.first {
+                height: 120px;
+            }
+            
+            .podium-place.second {
+                height: 100px;
+            }
+            
+            .podium-place.third {
+                height: 80px;
+            }
+            
+            .medal {
+                font-size: 24px;
+            }
+            
+            .player-name {
+                font-size: 12px;
+            }
+            
+            .player-score {
+                font-size: 10px;
+            }
+            
+            .rank-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .rank-item {
+                min-width: 100%;
+                max-width: 300px;
+            }
+            
+            .hall-of-fame {
+                grid-template-columns: 1fr;
+            }
+            
+            .achievement-card {
+                padding: 16px;
+            }
+            
+            .achievement-title {
+                font-size: 16px;
+            }
+            
+            .achievement-player {
+                font-size: 18px;
+            }
+            
+            .achievement-value {
+                font-size: 20px;
+            }
+            
+            .player-card {
+                padding: 12px 16px;
+            }
+            
+            .player-rank {
+                font-size: 20px;
+                min-width: 30px;
+            }
+            
+            .player-name {
+                font-size: 14px;
+            }
+            
+            .player-stats {
+                gap: 8px;
+            }
+            
+            .stat-item {
+                font-size: 12px;
+                padding: 2px 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .medal-podium {
+                height: 120px;
+            }
+            
+            .podium-place {
+                min-width: 50px;
+                padding: 8px 6px 12px;
+            }
+            
+            .podium-place.first {
+                height: 100px;
+            }
+            
+            .podium-place.second {
+                height: 80px;
+            }
+            
+            .podium-place.third {
+                height: 60px;
+            }
+            
+            .medal {
+                font-size: 20px;
+            }
+            
+            .player-name {
+                font-size: 10px;
+            }
+            
+            .player-score {
+                font-size: 9px;
+            }
+            
+            .achievement-card {
+                padding: 12px;
+            }
+            
+            .achievement-title {
+                font-size: 14px;
+            }
+            
+            .achievement-player {
+                font-size: 16px;
+            }
+            
+            .achievement-value {
+                font-size: 18px;
+            }
+        }
+
         .score-display {
             font-size: 32px;
             font-weight: 800;
@@ -1310,26 +1450,226 @@
             box-shadow: 0 4px 15px rgba(205, 127, 50, 0.4);
         }
 
-        .medal-emoji {
+        .podium-place {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px 12px 0 0;
+            padding: 16px 12px 20px;
+            min-width: 80px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .podium-place:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .podium-place.first {
+            height: 160px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .podium-place.second {
+            height: 140px;
+            background: linear-gradient(135deg, #c0c0c0 0%, #e5e5e5 100%);
+            box-shadow: 0 4px 15px rgba(192, 192, 192, 0.4);
+        }
+
+        .podium-place.third {
+            height: 120px;
+            background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%);
+            box-shadow: 0 4px 15px rgba(205, 127, 50, 0.4);
+        }
+
+        .medal {
             font-size: 32px;
             margin-bottom: 8px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
-        .medal-player {
-            font-weight: 600;
+        .player-name {
+            font-weight: bold;
             font-size: 14px;
-            text-align: center;
-            margin-bottom: 4px;
             color: #1f2937;
-            line-height: 1.2;
+            margin-bottom: 4px;
+            text-align: center;
         }
 
-        .medal-stats {
+        .player-score {
             font-size: 12px;
             color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* 계급 시스템 스타일 */
+        .rank-system-display {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .rank-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .rank-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
+        }
+
+        .rank-emoji-large {
+            font-size: 24px;
+        }
+
+        .rank-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rank-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .rank-score {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* 명예의 전당 스타일 */
+        .hall-of-fame {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .achievement-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #f59e0b;
             text-align: center;
-            line-height: 1.2;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .achievement-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+
+        .achievement-player {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .achievement-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 8px;
+        }
+
+        .achievement-description {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* 최고 성과자 스타일 */
+        .top-players {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .player-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
+        }
+
+        .player-rank {
+            font-size: 24px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .player-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .stat-item {
+            font-size: 14px;
+            color: #6b7280;
+            background: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+            padding: 40px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border: 2px dashed #d1d5db;
         }
 
         .medal-place.empty {
@@ -1758,6 +2098,14 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="section">
+                <h3>🏅 명예의 전당</h3>
+                <div class="info-text">
+                    특별한 업적을 달성한 선수들을 기립니다.
+                </div>
+                <div id="hall-of-fame" class="hall-of-fame"></div>
             </div>
 
             <div class="section">
@@ -2894,12 +3242,191 @@
 
         // 시상식 페이지 렌더링
         function renderStatisticsPage() {
+            updateMedalCeremony();
+            updateHallOfFame();
             renderTopPlayers();
+        }
+
+        // 메달 시상식 업데이트
+        function updateMedalCeremony() {
+            const playerStats = calculatePlayerStats();
+            const topPlayers = Object.entries(playerStats)
+                .filter(([name, stats]) => stats.games >= 3)
+                .sort((a, b) => b[1].score - a[1].score)
+                .slice(0, 3);
+
+            const places = ['first', 'second', 'third'];
+            const medals = ['🥇', '🥈', '🥉'];
+            
+            places.forEach((place, index) => {
+                const nameElement = document.getElementById(`${place}-place`);
+                const scoreElement = document.getElementById(`${place}-score`);
+                
+                if (topPlayers[index]) {
+                    const [name, stats] = topPlayers[index];
+                    nameElement.textContent = name;
+                    scoreElement.textContent = `${stats.score}점`;
+                } else {
+                    nameElement.textContent = '-';
+                    scoreElement.textContent = '0점';
+                }
+            });
+        }
+
+        // 명예의 전당 업데이트
+        function updateHallOfFame() {
+            const hallOfFameContainer = document.getElementById('hall-of-fame');
+            const playerStats = calculatePlayerStats();
+            
+            const achievements = [];
+            
+            // 최다 승리
+            const mostWins = Object.entries(playerStats)
+                .sort((a, b) => b[1].wins - a[1].wins)[0];
+            if (mostWins && mostWins[1].wins > 0) {
+                achievements.push({
+                    title: '🏆 최다 승리',
+                    player: mostWins[0],
+                    value: `${mostWins[1].wins}승`,
+                    description: '가장 많은 승리를 기록한 선수'
+                });
+            }
+            
+            // 최고 승률 (최소 5경기)
+            const bestWinRate = Object.entries(playerStats)
+                .filter(([name, stats]) => stats.games >= 5)
+                .sort((a, b) => (b[1].wins / b[1].games) - (a[1].wins / a[1].games))[0];
+            if (bestWinRate) {
+                const winRate = Math.round((bestWinRate[1].wins / bestWinRate[1].games) * 100);
+                achievements.push({
+                    title: '🎯 최고 승률',
+                    player: bestWinRate[0],
+                    value: `${winRate}%`,
+                    description: '최고 승률을 기록한 선수'
+                });
+            }
+            
+            // 최다 참여
+            const mostActive = Object.entries(playerStats)
+                .sort((a, b) => b[1].games - a[1].games)[0];
+            if (mostActive && mostActive[1].games > 0) {
+                achievements.push({
+                    title: '⚡ 최다 참여',
+                    player: mostActive[0],
+                    value: `${mostActive[1].games}경기`,
+                    description: '가장 활발한 선수'
+                });
+            }
+            
+            // 최고 점수
+            const highestScore = Object.entries(playerStats)
+                .sort((a, b) => b[1].score - a[1].score)[0];
+            if (highestScore && highestScore[1].score > 0) {
+                achievements.push({
+                    title: '💎 최고 점수',
+                    player: highestScore[0],
+                    value: `${highestScore[1].score}점`,
+                    description: '가장 높은 점수를 기록한 선수'
+                });
+            }
+            
+            if (achievements.length === 0) {
+                hallOfFameContainer.innerHTML = '<div class="no-data">아직 업적이 없습니다.</div>';
+                return;
+            }
+            
+            hallOfFameContainer.innerHTML = achievements.map(achievement => `
+                <div class="achievement-card">
+                    <div class="achievement-title">${achievement.title}</div>
+                    <div class="achievement-player">${achievement.player}</div>
+                    <div class="achievement-value">${achievement.value}</div>
+                    <div class="achievement-description">${achievement.description}</div>
+                </div>
+            `).join('');
+        }
+
+        // 선수 통계 계산
+        function calculatePlayerStats() {
+            const stats = {};
+            
+            gameRecords.forEach(record => {
+                const allMembers = [...record.groupAMembers, ...record.groupBMembers];
+                
+                allMembers.forEach(member => {
+                    if (!stats[member]) {
+                        stats[member] = {
+                            games: 0,
+                            wins: 0,
+                            score: 0
+                        };
+                    }
+                    
+                    stats[member].games++;
+                    
+                    const isInGroupA = record.groupAMembers.includes(member);
+                    const isWinner = (isInGroupA && record.winner === 'A') || (!isInGroupA && record.winner === 'B');
+                    
+                    if (isWinner) {
+                        stats[member].wins++;
+                        stats[member].score += 10;
+                    } else {
+                        stats[member].score = Math.max(0, stats[member].score - 5);
+                    }
+                });
+            });
+            
+            return stats;
+        }
+
+        // 최고 성과자 렌더링
+        function renderTopPlayers() {
+            const topPlayersContainer = document.getElementById('top-players');
+            const playerStats = calculatePlayerStats();
+            
+            const topPlayers = Object.entries(playerStats)
+                .filter(([name, stats]) => stats.games >= 1)
+                .sort((a, b) => {
+                    // 점수 우선, 그 다음 승률, 마지막으로 참여 횟수
+                    if (b[1].score !== a[1].score) return b[1].score - a[1].score;
+                    const bWinRate = b[1].games > 0 ? b[1].wins / b[1].games : 0;
+                    const aWinRate = a[1].games > 0 ? a[1].wins / a[1].games : 0;
+                    if (bWinRate !== aWinRate) return bWinRate - aWinRate;
+                    return b[1].games - a[1].games;
+                })
+                .slice(0, 10);
+            
+            if (topPlayers.length === 0) {
+                topPlayersContainer.innerHTML = '<div class="no-data">아직 경기 기록이 없습니다.</div>';
+                return;
+            }
+            
+            topPlayersContainer.innerHTML = topPlayers.map(([name, stats], index) => {
+                const winRate = stats.games > 0 ? Math.round((stats.wins / stats.games) * 100) : 0;
+                const rank = index + 1;
+                const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+                
+                return `
+                    <div class="player-card">
+                        <div class="player-rank">${rankEmoji}</div>
+                        <div class="player-info">
+                            <div class="player-name">${name}</div>
+                            <div class="player-stats">
+                                <span class="stat-item">${stats.score}점</span>
+                                <span class="stat-item">${winRate}%</span>
+                                <span class="stat-item">${stats.games}경기</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // 통계 페이지 렌더링
         function renderAnalyticsPage() {
-            updateAllCharts();
+            // 페이지가 완전히 로드된 후 차트 업데이트
+            setTimeout(() => {
+                updateAllCharts();
+            }, 100);
         }
 
         // 통계 기간 선택
