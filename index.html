@@ -1549,21 +1549,21 @@
         .rank-system-display {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 16px;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .rank-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            padding: 16px 20px;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
             width: 100%;
-            max-width: 400px;
+            max-width: 350px;
             margin: 0 auto;
         }
 
@@ -1574,7 +1574,7 @@
         }
 
         .rank-emoji-large {
-            font-size: 24px;
+            font-size: 20px;
         }
 
         .rank-info {
@@ -1584,47 +1584,24 @@
 
         .rank-name {
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
             color: #1f2937;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .rank-score {
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
         }
 
         /* 계급 시스템 모바일 반응형 */
         @media (max-width: 768px) {
             .rank-system-display {
-                gap: 10px;
-            }
-
-            .rank-item {
-                padding: 14px 18px;
-                gap: 10px;
-            }
-
-            .rank-emoji-large {
-                font-size: 20px;
-            }
-
-            .rank-name {
-                font-size: 14px;
-            }
-
-            .rank-score {
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .rank-system-display {
                 gap: 8px;
             }
 
             .rank-item {
-                padding: 12px 16px;
+                padding: 12px 14px;
                 gap: 8px;
             }
 
@@ -1638,6 +1615,29 @@
 
             .rank-score {
                 font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .rank-system-display {
+                gap: 6px;
+            }
+
+            .rank-item {
+                padding: 10px 12px;
+                gap: 6px;
+            }
+
+            .rank-emoji-large {
+                font-size: 16px;
+            }
+
+            .rank-name {
+                font-size: 12px;
+            }
+
+            .rank-score {
+                font-size: 10px;
             }
         }
 
@@ -3652,7 +3652,7 @@
             const worstTeams = Object.entries(teamStats)
                 .filter(([team, stats]) => stats.total >= 2)
                 .sort((a, b) => (a[1].wins / a[1].total) - (b[1].wins / b[1].total))
-                .slice(0, 6);
+                .slice(0, 5);
             
             if (worstTeams.length === 0) {
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -3807,7 +3807,7 @@
             const topTeams = Object.entries(teamStats)
                 .filter(([team, stats]) => stats.total >= 2)
                 .sort((a, b) => (b[1].wins / b[1].total) - (a[1].wins / a[1].total))
-                .slice(0, 6);
+                .slice(0, 5);
             
             if (topTeams.length === 0) {
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
