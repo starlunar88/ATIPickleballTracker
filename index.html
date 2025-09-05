@@ -2051,8 +2051,6 @@
                                 <div class="rank-score">0-29점</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="rank-row">
                         <div class="rank-item">
                             <span class="rank-emoji-large">🎾</span>
                             <div class="rank-info">
@@ -2067,6 +2065,8 @@
                                 <div class="rank-score">400-799점</div>
                             </div>
                         </div>
+                    </div>
+                    <div class="rank-row">
                         <div class="rank-item">
                             <span class="rank-emoji-large">🥉</span>
                             <div class="rank-info">
@@ -2074,8 +2074,6 @@
                                 <div class="rank-score">800-1199점</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="rank-row">
                         <div class="rank-item">
                             <span class="rank-emoji-large">🥈</span>
                             <div class="rank-info">
@@ -2090,6 +2088,8 @@
                                 <div class="rank-score">1800-2499점</div>
                             </div>
                         </div>
+                    </div>
+                    <div class="rank-row">
                         <div class="rank-item">
                             <span class="rank-emoji-large">🏆</span>
                             <div class="rank-info">
@@ -3418,6 +3418,17 @@
 
         // 통계 페이지 렌더링
         function renderAnalyticsPage() {
+            // 전체 통계 업데이트
+            const totalGamesElement = document.getElementById('total-games');
+            const totalMembersElement = document.getElementById('total-members');
+            
+            if (totalGamesElement) {
+                totalGamesElement.textContent = gameRecords.length;
+            }
+            if (totalMembersElement) {
+                totalMembersElement.textContent = members.length;
+            }
+            
             // 페이지가 완전히 로드된 후 차트 업데이트
             setTimeout(() => {
                 updateAllCharts();
@@ -4056,10 +4067,6 @@
 
         // 시상식 페이지 렌더링
         function renderStatisticsPage() {
-            // 전체 통계
-            document.getElementById('total-games').textContent = gameRecords.length;
-            document.getElementById('total-members').textContent = members.length;
-            
             // 최고 성과자 계산 (점수 기준)
             const playerStats = members.map(member => {
                 // 멤버 이름으로 경기 검색 (groupAMembers, groupBMembers는 이름 배열)
@@ -4110,10 +4117,10 @@
             }).join('');
 
             // 메달 시상식 렌더링
-            renderMedalCeremony(playerStats);
+            updateMedalCeremony();
             
             // 명예의 전당 렌더링
-            renderHallOfFame();
+            updateHallOfFame();
         }
 
         // 명예의 전당 렌더링
