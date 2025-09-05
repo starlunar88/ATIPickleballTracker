@@ -1549,15 +1549,8 @@
         .rank-system-display {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .rank-row {
-            display: flex;
             gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
+            margin-top: 16px;
         }
 
         .rank-item {
@@ -1569,8 +1562,9 @@
             border-radius: 12px;
             border: 2px solid #e2e8f0;
             transition: all 0.3s ease;
-            flex: 1;
-            min-width: 0;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         .rank-item:hover {
@@ -1603,20 +1597,12 @@
         /* 계급 시스템 모바일 반응형 */
         @media (max-width: 768px) {
             .rank-system-display {
-                gap: 12px;
-                padding: 12px;
-            }
-
-            .rank-row {
-                gap: 8px;
-                flex-wrap: wrap;
+                gap: 10px;
             }
 
             .rank-item {
-                flex: 1;
-                min-width: calc(50% - 4px);
-                padding: 12px 16px;
-                gap: 8px;
+                padding: 14px 18px;
+                gap: 10px;
             }
 
             .rank-emoji-large {
@@ -1635,17 +1621,11 @@
         @media (max-width: 480px) {
             .rank-system-display {
                 gap: 8px;
-                padding: 8px;
-            }
-
-            .rank-row {
-                gap: 6px;
             }
 
             .rank-item {
-                min-width: 100%;
-                padding: 10px 12px;
-                gap: 6px;
+                padding: 12px 16px;
+                gap: 8px;
             }
 
             .rank-emoji-large {
@@ -2090,59 +2070,53 @@
                     승리 시 +10점, 패배 시 -5점으로 점수가 누적됩니다. (최소 0점)
                 </div>
                 <div class="rank-system-display">
-                    <div class="rank-row">
-                        <div class="rank-item">
-                            <span class="rank-emoji-large">🆕</span>
-                            <div class="rank-info">
-                                <div class="rank-name">초보자</div>
-                                <div class="rank-score">0-29점</div>
-                            </div>
-                        </div>
-                        <div class="rank-item">
-                            <span class="rank-emoji-large">🎾</span>
-                            <div class="rank-info">
-                                <div class="rank-name">플레이어</div>
-                                <div class="rank-score">30-399점</div>
-                            </div>
-                        </div>
-                        <div class="rank-item">
-                            <span class="rank-emoji-large">⭐</span>
-                            <div class="rank-info">
-                                <div class="rank-name">프로</div>
-                                <div class="rank-score">400-799점</div>
-                            </div>
+                    <div class="rank-item">
+                        <span class="rank-emoji-large">🆕</span>
+                        <div class="rank-info">
+                            <div class="rank-name">초보자</div>
+                            <div class="rank-score">0-29점</div>
                         </div>
                     </div>
-                    <div class="rank-row">
-                        <div class="rank-item">
-                            <span class="rank-emoji-large">🥉</span>
-                            <div class="rank-info">
-                                <div class="rank-name">챔피언</div>
-                                <div class="rank-score">800-1199점</div>
-                            </div>
-                        </div>
-                        <div class="rank-item">
-                            <span class="rank-emoji-large">🥈</span>
-                            <div class="rank-info">
-                                <div class="rank-name">마스터</div>
-                                <div class="rank-score">1200-1799점</div>
-                            </div>
-                        </div>
-                        <div class="rank-item">
-                            <span class="rank-emoji-large">🥇</span>
-                            <div class="rank-info">
-                                <div class="rank-name">레전드</div>
-                                <div class="rank-score">1800-2499점</div>
-                            </div>
+                    <div class="rank-item">
+                        <span class="rank-emoji-large">🎾</span>
+                        <div class="rank-info">
+                            <div class="rank-name">플레이어</div>
+                            <div class="rank-score">30-399점</div>
                         </div>
                     </div>
-                    <div class="rank-row">
-                        <div class="rank-item">
-                            <span class="rank-emoji-large">🏆</span>
-                            <div class="rank-info">
-                                <div class="rank-name">GOAT</div>
-                                <div class="rank-score">2500점+</div>
-                            </div>
+                    <div class="rank-item">
+                        <span class="rank-emoji-large">⭐</span>
+                        <div class="rank-info">
+                            <div class="rank-name">프로</div>
+                            <div class="rank-score">400-799점</div>
+                        </div>
+                    </div>
+                    <div class="rank-item">
+                        <span class="rank-emoji-large">🥉</span>
+                        <div class="rank-info">
+                            <div class="rank-name">챔피언</div>
+                            <div class="rank-score">800-1199점</div>
+                        </div>
+                    </div>
+                    <div class="rank-item">
+                        <span class="rank-emoji-large">🥈</span>
+                        <div class="rank-info">
+                            <div class="rank-name">마스터</div>
+                            <div class="rank-score">1200-1799점</div>
+                        </div>
+                    </div>
+                    <div class="rank-item">
+                        <span class="rank-emoji-large">🥇</span>
+                        <div class="rank-info">
+                            <div class="rank-name">레전드</div>
+                            <div class="rank-score">1800-2499점</div>
+                        </div>
+                    </div>
+                    <div class="rank-item">
+                        <span class="rank-emoji-large">🏆</span>
+                        <div class="rank-info">
+                            <div class="rank-name">GOAT</div>
+                            <div class="rank-score">2500점+</div>
                         </div>
                     </div>
                 </div>
@@ -2199,10 +2173,14 @@
                 <!-- 팀별 통계 -->
                 <div class="stats-section">
                     <h4>👥 팀별 분석</h4>
-                    <div class="stats-grid-single">
-                        <div class="stat-card-large">
-                            <h5>최강 팀 조합</h5>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h5>🏆 최강 팀 조합</h5>
                             <canvas id="teamComboChart"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h5>😅 최약 팀 조합</h5>
+                            <canvas id="worstTeamComboChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -3555,6 +3533,13 @@
                 console.error('팀 조합 차트 오류:', error);
             }
             
+            try {
+                updateWorstTeamComboChart(filteredRecords);
+                console.log('최약 팀 조합 차트 업데이트 완료');
+            } catch (error) {
+                console.error('최약 팀 조합 차트 오류:', error);
+            }
+            
         }
 
         // 승률 차트 업데이트
@@ -3627,6 +3612,100 @@
                                 font: { size: 9 },
                                 boxWidth: 12
                             }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 최약 팀 조합 차트 업데이트
+        function updateWorstTeamComboChart(records) {
+            const canvas = document.getElementById('worstTeamComboChart');
+            if (!canvas) {
+                console.error('worstTeamComboChart 캔버스를 찾을 수 없습니다');
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            
+            if (window.worstTeamComboChart && typeof window.worstTeamComboChart.destroy === 'function') {
+                window.worstTeamComboChart.destroy();
+            }
+            
+            const teamStats = {};
+            
+            records.forEach(record => {
+                const teamA = record.groupAMembers.sort().join(', ');
+                const teamB = record.groupBMembers.sort().join(', ');
+                
+                [teamA, teamB].forEach(team => {
+                    if (!teamStats[team]) {
+                        teamStats[team] = { wins: 0, total: 0 };
+                    }
+                    teamStats[team].total++;
+                    
+                    if ((team === teamA && record.winner === 'A') || (team === teamB && record.winner === 'B')) {
+                        teamStats[team].wins++;
+                    }
+                });
+            });
+            
+            const worstTeams = Object.entries(teamStats)
+                .filter(([team, stats]) => stats.total >= 2)
+                .sort((a, b) => (a[1].wins / a[1].total) - (b[1].wins / b[1].total))
+                .slice(0, 6);
+            
+            if (worstTeams.length === 0) {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('데이터가 부족합니다', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            window.worstTeamComboChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: worstTeams.map(([team, stats]) => `${team} (${Math.round(stats.wins / stats.total * 100)}%)`),
+                    datasets: [{
+                        label: '승률',
+                        data: worstTeams.map(([team, stats]) => Math.round(stats.wins / stats.total * 100)),
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(245, 101, 101, 0.8)',
+                            'rgba(252, 165, 165, 0.8)',
+                            'rgba(254, 202, 202, 0.8)',
+                            'rgba(254, 226, 226, 0.8)',
+                            'rgba(254, 242, 242, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(245, 101, 101, 1)',
+                            'rgba(252, 165, 165, 1)',
+                            'rgba(254, 202, 202, 1)',
+                            'rgba(254, 226, 226, 1)',
+                            'rgba(254, 242, 242, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
                         }
                     }
                 }
