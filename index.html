@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> 피클볼 스코어 트래커 (공유)</title>
     
+    <!-- Chart.js 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
@@ -820,6 +823,58 @@
             }
         }
 
+        /* 통계 페이지 스타일 */
+        .stats-section {
+            margin-bottom: 32px;
+        }
+
+        .stats-section h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-card h5 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .stat-card canvas {
+            max-height: 250px;
+        }
+
+        /* 반응형 통계 */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .stat-card {
+                padding: 16px;
+            }
+        }
+
         .score-display {
             font-size: 32px;
             font-weight: 800;
@@ -1582,6 +1637,69 @@
                 
                 <div class="clear-section">
                     <button class="btn btn-danger" onclick="clearAllRecords()">모든 기록 삭제</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 통계 페이지 -->
+        <div id="statistics-page" class="page">
+            <div class="section">
+                <h3>📊 경기 통계</h3>
+                
+                <!-- 통계 필터 -->
+                <div class="filter-section">
+                    <div class="period-tabs">
+                        <button class="period-tab active" data-period="today" onclick="selectStatsPeriod('today')">오늘</button>
+                        <button class="period-tab" data-period="thisweek" onclick="selectStatsPeriod('thisweek')">이번주</button>
+                        <button class="period-tab" data-period="lastweek" onclick="selectStatsPeriod('lastweek')">지난주</button>
+                        <button class="period-tab" data-period="month" onclick="selectStatsPeriod('month')">한달</button>
+                        <button class="period-tab" data-period="all" onclick="selectStatsPeriod('all')">전체</button>
+                    </div>
+                </div>
+
+                <!-- 개인별 통계 -->
+                <div class="stats-section">
+                    <h4>🏆 개인별 성과</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h5>승률 TOP 5</h5>
+                            <canvas id="winRateChart"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h5>참여 횟수</h5>
+                            <canvas id="participationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 팀별 통계 -->
+                <div class="stats-section">
+                    <h4>👥 팀별 분석</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h5>최강 팀 조합</h5>
+                            <canvas id="teamComboChart"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h5>점수 분포</h5>
+                            <canvas id="scoreDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 시간대별 통계 -->
+                <div class="stats-section">
+                    <h4>⏰ 활동 패턴</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h5>요일별 경기</h5>
+                            <canvas id="dayOfWeekChart"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h5>월별 활동</h5>
+                            <canvas id="monthlyActivityChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2642,6 +2760,434 @@
         // 기록 페이지 렌더링
         function renderHistoryPage() {
             filterRecords();
+        }
+
+        // 통계 페이지 렌더링
+        function renderStatisticsPage() {
+            updateAllCharts();
+        }
+
+        // 통계 기간 선택
+        function selectStatsPeriod(period) {
+            // 모든 탭에서 active 클래스 제거
+            document.querySelectorAll('#statistics-page .period-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 선택된 탭에 active 클래스 추가
+            document.querySelector(`#statistics-page [data-period="${period}"]`).classList.add('active');
+            
+            // 차트 업데이트
+            updateAllCharts();
+        }
+
+        // 필터링된 게임 기록 가져오기
+        function getFilteredGameRecords() {
+            const activeTab = document.querySelector('#statistics-page .period-tab.active');
+            const selectedPeriod = activeTab ? activeTab.getAttribute('data-period') : 'today';
+            
+            let filtered = [...gameRecords];
+            const now = new Date();
+            
+            if (selectedPeriod === 'today') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => {
+                    const recordDate = new Date(record.date);
+                    return recordDate >= today && recordDate < tomorrow;
+                });
+            } else if (selectedPeriod === 'thisweek') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const dayOfWeek = today.getDay();
+                const startOfWeek = new Date(today.getTime() - dayOfWeek * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => new Date(record.date) >= startOfWeek);
+            } else if (selectedPeriod === 'lastweek') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const dayOfWeek = today.getDay();
+                const startOfThisWeek = new Date(today.getTime() - dayOfWeek * 24 * 60 * 60 * 1000);
+                const startOfLastWeek = new Date(startOfThisWeek.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => {
+                    const recordDate = new Date(record.date);
+                    return recordDate >= startOfLastWeek && recordDate < startOfThisWeek;
+                });
+            } else if (selectedPeriod === 'month') {
+                const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => new Date(record.date) >= thirtyDaysAgo);
+            }
+            
+            return filtered;
+        }
+
+        // 모든 차트 업데이트
+        function updateAllCharts() {
+            const filteredRecords = getFilteredGameRecords();
+            
+            updateWinRateChart(filteredRecords);
+            updateParticipationChart(filteredRecords);
+            updateTeamComboChart(filteredRecords);
+            updateScoreDistributionChart(filteredRecords);
+            updateDayOfWeekChart(filteredRecords);
+            updateMonthlyActivityChart(filteredRecords);
+        }
+
+        // 승률 차트 업데이트
+        function updateWinRateChart(records) {
+            const ctx = document.getElementById('winRateChart').getContext('2d');
+            
+            // 기존 차트 제거
+            if (window.winRateChart) {
+                window.winRateChart.destroy();
+            }
+            
+            const memberStats = {};
+            
+            records.forEach(record => {
+                const allMembers = [...record.groupAMembers, ...record.groupBMembers];
+                allMembers.forEach(member => {
+                    if (!memberStats[member]) {
+                        memberStats[member] = { wins: 0, total: 0 };
+                    }
+                    memberStats[member].total++;
+                    
+                    const isInGroupA = record.groupAMembers.includes(member);
+                    if ((isInGroupA && record.winner === 'A') || (!isInGroupA && record.winner === 'B')) {
+                        memberStats[member].wins++;
+                    }
+                });
+            });
+            
+            const topMembers = Object.entries(memberStats)
+                .filter(([name, stats]) => stats.total >= 3) // 최소 3경기 이상
+                .sort((a, b) => (b[1].wins / b[1].total) - (a[1].wins / a[1].total))
+                .slice(0, 5);
+            
+            if (topMembers.length === 0) {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('데이터가 부족합니다', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            window.winRateChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: topMembers.map(([name, stats]) => `${name} (${Math.round(stats.wins / stats.total * 100)}%)`),
+                    datasets: [{
+                        data: topMembers.map(([name, stats]) => Math.round(stats.wins / stats.total * 100)),
+                        backgroundColor: [
+                            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 10,
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 참여 횟수 차트 업데이트
+        function updateParticipationChart(records) {
+            const ctx = document.getElementById('participationChart').getContext('2d');
+            
+            if (window.participationChart) {
+                window.participationChart.destroy();
+            }
+            
+            const memberCounts = {};
+            
+            records.forEach(record => {
+                const allMembers = [...record.groupAMembers, ...record.groupBMembers];
+                allMembers.forEach(member => {
+                    memberCounts[member] = (memberCounts[member] || 0) + 1;
+                });
+            });
+            
+            const topMembers = Object.entries(memberCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 8);
+            
+            if (topMembers.length === 0) {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('데이터가 부족합니다', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            window.participationChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: topMembers.map(([name]) => name),
+                    datasets: [{
+                        label: '참여 횟수',
+                        data: topMembers.map(([, count]) => count),
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#1d4ed8',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 팀 조합 차트 업데이트
+        function updateTeamComboChart(records) {
+            const ctx = document.getElementById('teamComboChart').getContext('2d');
+            
+            if (window.teamComboChart) {
+                window.teamComboChart.destroy();
+            }
+            
+            const teamStats = {};
+            
+            records.forEach(record => {
+                const teamA = record.groupAMembers.sort().join(', ');
+                const teamB = record.groupBMembers.sort().join(', ');
+                
+                [teamA, teamB].forEach(team => {
+                    if (!teamStats[team]) {
+                        teamStats[team] = { wins: 0, total: 0 };
+                    }
+                    teamStats[team].total++;
+                    
+                    if ((team === teamA && record.winner === 'A') || (team === teamB && record.winner === 'B')) {
+                        teamStats[team].wins++;
+                    }
+                });
+            });
+            
+            const topTeams = Object.entries(teamStats)
+                .filter(([team, stats]) => stats.total >= 2)
+                .sort((a, b) => (b[1].wins / b[1].total) - (a[1].wins / a[1].total))
+                .slice(0, 6);
+            
+            if (topTeams.length === 0) {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('데이터가 부족합니다', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            window.teamComboChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: topTeams.map(([team, stats]) => `${team} (${Math.round(stats.wins / stats.total * 100)}%)`),
+                    datasets: [{
+                        label: '승률',
+                        data: topTeams.map(([team, stats]) => Math.round(stats.wins / stats.total * 100)),
+                        backgroundColor: '#10b981',
+                        borderColor: '#059669',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 점수 분포 차트 업데이트
+        function updateScoreDistributionChart(records) {
+            const ctx = document.getElementById('scoreDistributionChart').getContext('2d');
+            
+            if (window.scoreDistributionChart) {
+                window.scoreDistributionChart.destroy();
+            }
+            
+            const scoreRanges = {
+                '0-5': 0, '6-10': 0, '11-15': 0, '16-20': 0, '21-25': 0, '26+': 0
+            };
+            
+            records.forEach(record => {
+                const maxScore = Math.max(record.scoreA, record.scoreB);
+                if (maxScore <= 5) scoreRanges['0-5']++;
+                else if (maxScore <= 10) scoreRanges['6-10']++;
+                else if (maxScore <= 15) scoreRanges['11-15']++;
+                else if (maxScore <= 20) scoreRanges['16-20']++;
+                else if (maxScore <= 25) scoreRanges['21-25']++;
+                else scoreRanges['26+']++;
+            });
+            
+            window.scoreDistributionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(scoreRanges),
+                    datasets: [{
+                        label: '경기 수',
+                        data: Object.values(scoreRanges),
+                        backgroundColor: '#f59e0b',
+                        borderColor: '#d97706',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 요일별 차트 업데이트
+        function updateDayOfWeekChart(records) {
+            const ctx = document.getElementById('dayOfWeekChart').getContext('2d');
+            
+            if (window.dayOfWeekChart) {
+                window.dayOfWeekChart.destroy();
+            }
+            
+            const dayCounts = {
+                '일': 0, '월': 0, '화': 0, '수': 0, '목': 0, '금': 0, '토': 0
+            };
+            
+            records.forEach(record => {
+                const day = new Date(record.date).getDay();
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                dayCounts[dayNames[day]]++;
+            });
+            
+            window.dayOfWeekChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(dayCounts),
+                    datasets: [{
+                        label: '경기 수',
+                        data: Object.values(dayCounts),
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 월별 활동 차트 업데이트
+        function updateMonthlyActivityChart(records) {
+            const ctx = document.getElementById('monthlyActivityChart').getContext('2d');
+            
+            if (window.monthlyActivityChart) {
+                window.monthlyActivityChart.destroy();
+            }
+            
+            const monthCounts = {};
+            
+            records.forEach(record => {
+                const date = new Date(record.date);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+            });
+            
+            const sortedMonths = Object.keys(monthCounts).sort();
+            
+            window.monthlyActivityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [{
+                        label: '경기 수',
+                        data: sortedMonths.map(month => monthCounts[month]),
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
         }
 
         // 기간선택 탭 함수
