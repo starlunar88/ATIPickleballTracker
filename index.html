@@ -828,6 +828,45 @@
             border: 1px solid #e2e8f0;
         }
 
+        /* 기간선택 탭 스타일 */
+        .period-tabs {
+            display: flex;
+            background: #e5e7eb;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+            gap: 4px;
+        }
+
+        .period-tab {
+            flex: 1;
+            padding: 8px 12px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.2s ease;
+            border: none;
+            background: transparent;
+        }
+
+        .period-tab:hover {
+            background: #d1d5db;
+            color: #374151;
+        }
+
+        .period-tab.active {
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        .period-tab.active:hover {
+            background: #2563eb;
+        }
+
         .filter-row {
             display: flex;
             gap: 16px;
@@ -1294,7 +1333,7 @@
                     <h1>피클볼 스코어 트래커<span class="title-emoji">🎾</span></h1>
                 </div>
                 <div class="header-right">
-                    <div class="version-info">v2.1.2</div>
+                    <div class="version-info">v1.0.3</div>
                 </div>
             </div>
 
@@ -1347,16 +1386,16 @@
                 
                 <!-- 필터 및 정렬 옵션 -->
                 <div class="filter-section">
+                    <!-- 기간선택 탭 -->
+                    <div class="period-tabs">
+                        <button class="period-tab active" data-period="today" onclick="selectPeriod('today')">오늘</button>
+                        <button class="period-tab" data-period="thisweek" onclick="selectPeriod('thisweek')">이번주</button>
+                        <button class="period-tab" data-period="lastweek" onclick="selectPeriod('lastweek')">지난주</button>
+                        <button class="period-tab" data-period="month" onclick="selectPeriod('month')">한달</button>
+                        <button class="period-tab" data-period="all" onclick="selectPeriod('all')">전체</button>
+                    </div>
+                    
                     <div class="filter-row">
-                        <div class="filter-group">
-                            <label>기간 선택</label>
-                            <select id="date-filter" onchange="filterRecords()">
-                                <option value="all">전체 기간</option>
-                                <option value="7days">최근 7일</option>
-                                <option value="30days">최근 30일</option>
-                                <option value="custom">사용자 지정</option>
-                            </select>
-                        </div>
                         <div class="filter-group">
                             <label>정렬</label>
                             <select id="sort-order" onchange="filterRecords()">
@@ -1371,16 +1410,6 @@
                                 <option value="15" selected>15개</option>
                                 <option value="20">20개</option>
                             </select>
-                        </div>
-                    </div>
-                    <div class="filter-row" id="custom-date-range" style="display: none;">
-                        <div class="filter-group">
-                            <label>날짜 범위</label>
-                            <div class="date-inputs">
-                                <input type="date" id="start-date" onchange="filterRecords()">
-                                <span>~</span>
-                                <input type="date" id="end-date" onchange="filterRecords()">
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -2458,37 +2487,59 @@
             filterRecords();
         }
 
+        // 기간선택 탭 함수
+        function selectPeriod(period) {
+            // 모든 탭에서 active 클래스 제거
+            document.querySelectorAll('.period-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 선택된 탭에 active 클래스 추가
+            document.querySelector(`[data-period="${period}"]`).classList.add('active');
+            
+            // 필터링 실행
+            filterRecords();
+        }
+
         // 필터링 및 페이지네이션
         function filterRecords() {
-            const dateFilter = document.getElementById('date-filter').value;
             const sortOrder = document.getElementById('sort-order').value;
             pageSize = parseInt(document.getElementById('page-size').value);
+            
+            // 활성화된 기간 탭 가져오기
+            const activeTab = document.querySelector('.period-tab.active');
+            const selectedPeriod = activeTab ? activeTab.getAttribute('data-period') : 'today';
             
             // 날짜 필터링
             let filtered = [...gameRecords];
             const now = new Date();
             
-            if (dateFilter === '7days') {
-                const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                filtered = filtered.filter(record => new Date(record.date) >= sevenDaysAgo);
-            } else if (dateFilter === '30days') {
+            if (selectedPeriod === 'today') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => {
+                    const recordDate = new Date(record.date);
+                    return recordDate >= today && recordDate < tomorrow;
+                });
+            } else if (selectedPeriod === 'thisweek') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const dayOfWeek = today.getDay();
+                const startOfWeek = new Date(today.getTime() - dayOfWeek * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => new Date(record.date) >= startOfWeek);
+            } else if (selectedPeriod === 'lastweek') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const dayOfWeek = today.getDay();
+                const startOfThisWeek = new Date(today.getTime() - dayOfWeek * 24 * 60 * 60 * 1000);
+                const startOfLastWeek = new Date(startOfThisWeek.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => {
+                    const recordDate = new Date(record.date);
+                    return recordDate >= startOfLastWeek && recordDate < startOfThisWeek;
+                });
+            } else if (selectedPeriod === 'month') {
                 const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
                 filtered = filtered.filter(record => new Date(record.date) >= thirtyDaysAgo);
-            } else if (dateFilter === 'custom') {
-                const startDate = document.getElementById('start-date').value;
-                const endDate = document.getElementById('end-date').value;
-                
-                if (startDate && endDate) {
-                    const start = new Date(startDate);
-                    const end = new Date(endDate);
-                    end.setHours(23, 59, 59); // 하루의 마지막 시간으로 설정
-                    
-                    filtered = filtered.filter(record => {
-                        const recordDate = new Date(record.date);
-                        return recordDate >= start && recordDate <= end;
-                    });
-                }
             }
+            // 'all'인 경우 필터링하지 않음
             
             // 정렬
             filtered.sort((a, b) => {
@@ -2624,19 +2675,6 @@
             }
         }
 
-        // 사용자 지정 날짜 범위 표시/숨김
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateFilter = document.getElementById('date-filter');
-            const customRange = document.getElementById('custom-date-range');
-            
-            dateFilter.addEventListener('change', function() {
-                if (this.value === 'custom') {
-                    customRange.style.display = 'block';
-                } else {
-                    customRange.style.display = 'none';
-                }
-            });
-        });
 
         // 개별 기록 삭제 (Firebase에서도 실제 삭제)
         async function deleteRecord(recordId) {
