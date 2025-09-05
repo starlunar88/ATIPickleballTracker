@@ -615,7 +615,7 @@
         /* 기록보기 그리드 레이아웃 */
         #history-list {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             margin-bottom: 20px;
         }
@@ -652,6 +652,9 @@
         }
 
         .history-team {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 11px;
             color: #374151;
             margin-bottom: 2px;
@@ -659,31 +662,16 @@
             line-height: 1.2;
         }
 
-        .history-score {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            padding: 6px 8px;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
+        .team-names {
+            flex: 1;
         }
 
-        .score-item {
-            text-align: center;
-        }
-
-        .score-label {
-            font-size: 9px;
-            color: #6b7280;
-            margin-bottom: 1px;
-        }
-
-        .score-value {
-            font-size: 14px;
+        .team-score {
+            font-size: 12px;
             font-weight: 700;
-            color: #1f2937;
+            margin-left: 8px;
         }
+
 
         .score-winner {
             color: #059669;
@@ -694,12 +682,6 @@
         }
 
         /* 반응형 디자인 */
-        @media (max-width: 1200px) {
-            #history-list {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
         @media (max-width: 900px) {
             #history-list {
                 grid-template-columns: repeat(2, 1fr);
@@ -2642,19 +2624,13 @@
                         </div>
                         
                         <div class="history-teams">
-                            <div class="history-team">${groupANames}</div>
-                            <div class="history-team">${groupBNames}</div>
-                        </div>
-                        
-                        <div class="history-score">
-                            <div class="score-item">
-                                <div class="score-label">Group A</div>
-                                <div class="score-value ${isWinnerA ? 'score-winner' : 'score-loser'}">${record.scoreA}</div>
+                            <div class="history-team">
+                                <span class="team-names">${groupANames}</span>
+                                <span class="team-score ${isWinnerA ? 'score-winner' : 'score-loser'}">${record.scoreA}</span>
                             </div>
-                            <div style="font-size: 16px; font-weight: 600; color: #6b7280;">-</div>
-                            <div class="score-item">
-                                <div class="score-label">Group B</div>
-                                <div class="score-value ${isWinnerB ? 'score-winner' : 'score-loser'}">${record.scoreB}</div>
+                            <div class="history-team">
+                                <span class="team-names">${groupBNames}</span>
+                                <span class="team-score ${isWinnerB ? 'score-winner' : 'score-loser'}">${record.scoreB}</span>
                             </div>
                         </div>
                     </div>
