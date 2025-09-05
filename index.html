@@ -622,8 +622,8 @@
 
         .history-item {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            padding: 16px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             border-left: 4px solid #3b82f6;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -638,7 +638,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .history-date {
@@ -660,7 +660,7 @@
         }
 
         .history-teams {
-            margin-bottom: 8px;
+            margin-bottom: 0;
         }
 
         .history-team {
@@ -669,9 +669,13 @@
             align-items: center;
             font-size: 13px;
             color: #374151;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
-            line-height: 1.3;
+            line-height: 1.2;
+        }
+
+        .history-team:last-child {
+            margin-bottom: 0;
         }
 
         .team-info {
@@ -684,12 +688,12 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
-            margin-right: 8px;
+            margin-right: 6px;
             color: white;
         }
 
@@ -710,7 +714,7 @@
         .team-score {
             font-size: 16px;
             font-weight: 700;
-            margin-left: 12px;
+            margin-left: 8px;
         }
 
 
@@ -726,11 +730,19 @@
         @media (max-width: 768px) {
             #history-list {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
+                gap: 10px;
             }
             
             .history-item {
-                padding: 12px;
+                padding: 10px;
+            }
+            
+            .history-header {
+                margin-bottom: 6px;
+            }
+            
+            .history-team {
+                margin-bottom: 4px;
             }
             
             .date-part {
@@ -754,20 +766,57 @@
             }
             
             .group-label {
-                width: 18px;
-                height: 18px;
-                font-size: 9px;
+                width: 16px;
+                height: 16px;
+                font-size: 8px;
+                margin-right: 5px;
             }
         }
 
         @media (max-width: 480px) {
             #history-list {
-                grid-template-columns: 1fr;
-                gap: 10px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
             }
             
             .history-item {
-                padding: 14px;
+                padding: 8px;
+            }
+            
+            .history-header {
+                margin-bottom: 4px;
+            }
+            
+            .history-team {
+                margin-bottom: 3px;
+            }
+            
+            .date-part {
+                font-size: 10px;
+            }
+            
+            .time-part {
+                font-size: 9px;
+            }
+            
+            .history-team {
+                font-size: 11px;
+            }
+            
+            .team-names {
+                font-size: 11px;
+            }
+            
+            .team-score {
+                font-size: 13px;
+                margin-left: 6px;
+            }
+            
+            .group-label {
+                width: 14px;
+                height: 14px;
+                font-size: 7px;
+                margin-right: 4px;
             }
         }
 
@@ -2696,7 +2745,7 @@
                                 <div class="date-part">${dateStr}</div>
                                 <div class="time-part">${timeStr}</div>
                             </div>
-                            <button onclick="deleteRecord('${record.id}')" style="background: #ef4444; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 9px; cursor: pointer;">🗑️</button>
+                            <button onclick="deleteRecord('${record.id}')" style="background: transparent; color: #6b7280; border: none; padding: 2px 6px; border-radius: 3px; font-size: 12px; cursor: pointer; transition: color 0.2s ease;">🗑️</button>
                         </div>
                         
                         <div class="history-teams">
