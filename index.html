@@ -2424,9 +2424,9 @@
                 }
                 window.isLoadingData = true;
 
-                // 멤버 데이터 불러오기
+                // Firebase에서 멤버 데이터 불러오기
                 const membersSnapshot = await getDocs(collection(window.db, 'members'));
-                members = membersSnapshot.docs.map(doc => {
+                const firebaseMembers = membersSnapshot.docs.map(doc => {
                     const data = doc.data();
                     return {
                         id: doc.id,
@@ -2437,20 +2437,40 @@
                 });
 
                 // selectedAvatar 값 검증 및 수정 (더 강화된 검증)
-                members.forEach(member => {
+                firebaseMembers.forEach(member => {
                     if (member.selectedAvatar === undefined || member.selectedAvatar === null || 
                         member.selectedAvatar < 0 || member.selectedAvatar >= avatars.length) {
                         member.selectedAvatar = -1;
                     }
                 });
 
-                // 경기 기록 불러오기
+                // 로컬 멤버가 있으면 로컬 우선, 없으면 Firebase 데이터 사용
+                if (members.length === 0) {
+                    members = firebaseMembers;
+                } else {
+                    // 로컬 멤버와 Firebase 멤버 병합 (로컬 우선)
+                    const localMemberIds = new Set(members.map(m => m.id));
+                    const newFirebaseMembers = firebaseMembers.filter(fm => !localMemberIds.has(fm.id));
+                    members = [...members, ...newFirebaseMembers];
+                }
+
+                // Firebase에서 경기 기록 불러오기
                 const recordsQuery = query(collection(window.db, 'gameRecords'), orderBy('date', 'desc'));
                 const recordsSnapshot = await getDocs(recordsQuery);
-                gameRecords = recordsSnapshot.docs.map(doc => ({
+                const firebaseRecords = recordsSnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
+
+                // 로컬 기록이 있으면 로컬 우선, 없으면 Firebase 데이터 사용
+                if (gameRecords.length === 0) {
+                    gameRecords = firebaseRecords;
+                } else {
+                    // 로컬 기록과 Firebase 기록 병합 (로컬 우선)
+                    const localRecordIds = new Set(gameRecords.map(r => r.id));
+                    const newFirebaseRecords = firebaseRecords.filter(fr => !localRecordIds.has(fr.id));
+                    gameRecords = [...gameRecords, ...newFirebaseRecords];
+                }
 
                 // 로컬 스토리지 업데이트
                 localStorage.setItem('pickleball-members', JSON.stringify(members));
@@ -2486,10 +2506,12 @@
 
         // 데이터 불러오기 (온라인/오프라인에 따라)
         async function loadData() {
+            // 먼저 로컬 데이터 로드
+            loadLocalData();
+            
+            // 온라인이면 Firebase에서 추가 데이터 동기화
             if (isOnline && window.db) {
                 await loadDataFromFirebase();
-            } else {
-                loadLocalData();
             }
         }
 
