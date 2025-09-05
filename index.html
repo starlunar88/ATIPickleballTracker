@@ -1571,6 +1571,7 @@
             <button class="nav-tab active" onclick="showPage('game')">경기</button>
             <button class="nav-tab history-tab" onclick="showPage('history')">기록보기</button>
             <button class="nav-tab" onclick="showPage('statistics')">시상식</button>
+            <button class="nav-tab" onclick="showPage('analytics')">통계</button>
             <button class="nav-tab" onclick="showPage('members')">멤버관리</button>
         </div>
 
@@ -1617,8 +1618,8 @@
                     <!-- 기간선택 탭 -->
                     <div class="period-tabs">
                         <button class="period-tab active" data-period="today" onclick="selectPeriod('today')">오늘</button>
-                        <button class="period-tab" data-period="thisweek" onclick="selectPeriod('thisweek')">이번주</button>
-                        <button class="period-tab" data-period="lastweek" onclick="selectPeriod('lastweek')">지난주</button>
+                        <button class="period-tab" data-period="1week" onclick="selectPeriod('1week')">1주</button>
+                        <button class="period-tab" data-period="2week" onclick="selectPeriod('2week')">2주</button>
                         <button class="period-tab" data-period="month" onclick="selectPeriod('month')">한달</button>
                         <button class="period-tab" data-period="all" onclick="selectPeriod('all')">전체</button>
                     </div>
@@ -1640,8 +1641,109 @@
             </div>
         </div>
 
-        <!-- 통계 페이지 -->
+        <!-- 시상식 페이지 -->
         <div id="statistics-page" class="page">
+            <div class="section">
+                <h3>🏆 올림픽 메달 시상식</h3>
+                <div class="info-text">
+                    최소 3경기 이상 참여한 선수 중 점수 기준으로 메달을 수여합니다.
+                </div>
+                <div id="medal-ceremony" class="medal-ceremony">
+                    <div class="medal-podium">
+                        <div class="podium-place second">
+                            <div class="medal">🥈</div>
+                            <div class="player-name" id="second-place">-</div>
+                            <div class="player-score" id="second-score">0점</div>
+                        </div>
+                        <div class="podium-place first">
+                            <div class="medal">🥇</div>
+                            <div class="player-name" id="first-place">-</div>
+                            <div class="player-score" id="first-score">0점</div>
+                        </div>
+                        <div class="podium-place third">
+                            <div class="medal">🥉</div>
+                            <div class="player-name" id="third-place">-</div>
+                            <div class="player-score" id="third-score">0점</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🎖️ 계급 시스템</h3>
+                <div class="info-text">
+                    승리 시 +10점, 패배 시 -5점으로 점수가 누적됩니다. (최소 0점)
+                </div>
+                <div class="rank-system-display">
+                    <div class="rank-row">
+                        <div class="rank-item">
+                            <span class="rank-emoji-large">🆕</span>
+                            <div class="rank-info">
+                                <div class="rank-name">초보자</div>
+                                <div class="rank-score">0-29점</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rank-row">
+                        <div class="rank-item">
+                            <span class="rank-emoji-large">🎾</span>
+                            <div class="rank-info">
+                                <div class="rank-name">플레이어</div>
+                                <div class="rank-score">30-399점</div>
+                            </div>
+                        </div>
+                        <div class="rank-item">
+                            <span class="rank-emoji-large">⭐</span>
+                            <div class="rank-info">
+                                <div class="rank-name">프로</div>
+                                <div class="rank-score">400-799점</div>
+                            </div>
+                        </div>
+                        <div class="rank-item">
+                            <span class="rank-emoji-large">🥉</span>
+                            <div class="rank-info">
+                                <div class="rank-name">챔피언</div>
+                                <div class="rank-score">800-1199점</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rank-row">
+                        <div class="rank-item">
+                            <span class="rank-emoji-large">🥈</span>
+                            <div class="rank-info">
+                                <div class="rank-name">마스터</div>
+                                <div class="rank-score">1200-1799점</div>
+                            </div>
+                        </div>
+                        <div class="rank-item">
+                            <span class="rank-emoji-large">🥇</span>
+                            <div class="rank-info">
+                                <div class="rank-name">레전드</div>
+                                <div class="rank-score">1800-2499점</div>
+                            </div>
+                        </div>
+                        <div class="rank-item">
+                            <span class="rank-emoji-large">🏆</span>
+                            <div class="rank-info">
+                                <div class="rank-name">GOAT</div>
+                                <div class="rank-score">2500점+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>최고 성과자</h3>
+                <div class="info-text">
+                    점수와 승률, 참여 횟수를 기준으로 계산됩니다.
+                </div>
+                <div id="top-players" class="top-players"></div>
+            </div>
+        </div>
+
+        <!-- 통계 페이지 -->
+        <div id="analytics-page" class="page">
             <div class="section">
                 <h3>📊 경기 통계</h3>
                 
@@ -2761,20 +2863,25 @@
             filterRecords();
         }
 
-        // 통계 페이지 렌더링
+        // 시상식 페이지 렌더링
         function renderStatisticsPage() {
+            renderTopPlayers();
+        }
+
+        // 통계 페이지 렌더링
+        function renderAnalyticsPage() {
             updateAllCharts();
         }
 
         // 통계 기간 선택
         function selectStatsPeriod(period) {
             // 모든 탭에서 active 클래스 제거
-            document.querySelectorAll('#statistics-page .period-tab').forEach(tab => {
+            document.querySelectorAll('#analytics-page .period-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
             // 선택된 탭에 active 클래스 추가
-            document.querySelector(`#statistics-page [data-period="${period}"]`).classList.add('active');
+            document.querySelector(`#analytics-page [data-period="${period}"]`).classList.add('active');
             
             // 차트 업데이트
             updateAllCharts();
@@ -2782,7 +2889,7 @@
 
         // 필터링된 게임 기록 가져오기
         function getFilteredGameRecords() {
-            const activeTab = document.querySelector('#statistics-page .period-tab.active');
+            const activeTab = document.querySelector('#analytics-page .period-tab.active');
             const selectedPeriod = activeTab ? activeTab.getAttribute('data-period') : 'today';
             
             let filtered = [...gameRecords];
@@ -3220,20 +3327,12 @@
                     const recordDate = new Date(record.date);
                     return recordDate >= today && recordDate < tomorrow;
                 });
-            } else if (selectedPeriod === 'thisweek') {
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const dayOfWeek = today.getDay();
-                const startOfWeek = new Date(today.getTime() - dayOfWeek * 24 * 60 * 60 * 1000);
-                filtered = filtered.filter(record => new Date(record.date) >= startOfWeek);
-            } else if (selectedPeriod === 'lastweek') {
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const dayOfWeek = today.getDay();
-                const startOfThisWeek = new Date(today.getTime() - dayOfWeek * 24 * 60 * 60 * 1000);
-                const startOfLastWeek = new Date(startOfThisWeek.getTime() - 7 * 24 * 60 * 60 * 1000);
-                filtered = filtered.filter(record => {
-                    const recordDate = new Date(record.date);
-                    return recordDate >= startOfLastWeek && recordDate < startOfThisWeek;
-                });
+            } else if (selectedPeriod === '1week') {
+                const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => new Date(record.date) >= oneWeekAgo);
+            } else if (selectedPeriod === '2week') {
+                const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(record => new Date(record.date) >= twoWeeksAgo);
             } else if (selectedPeriod === 'month') {
                 const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
                 filtered = filtered.filter(record => new Date(record.date) >= thirtyDaysAgo);
@@ -3577,6 +3676,7 @@
             renderMembersPage();
             renderHistoryPage();
             renderStatisticsPage();
+            renderAnalyticsPage();
         }
 
         // 모든 멤버 삭제 (Firebase에서도 실제 삭제, 기록은 유지)
