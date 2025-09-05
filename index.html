@@ -2339,6 +2339,7 @@
         let selectedGroupA = [];
         let selectedGroupB = [];
         let isOnline = navigator.onLine;
+        let deletedMemberIds = new Set(); // 삭제된 멤버 ID 추적
 
         // 온라인/오프라인 상태 감지
         window.addEventListener('online', () => {
@@ -2444,13 +2445,16 @@
                     }
                 });
 
+                // 삭제된 멤버 필터링
+                const filteredFirebaseMembers = firebaseMembers.filter(member => !deletedMemberIds.has(member.id));
+                
                 // 로컬 멤버가 있으면 로컬 우선, 없으면 Firebase 데이터 사용
                 if (members.length === 0) {
-                    members = firebaseMembers;
+                    members = filteredFirebaseMembers;
                 } else {
-                    // 로컬 멤버와 Firebase 멤버 병합 (로컬 우선)
+                    // 로컬 멤버와 Firebase 멤버 병합 (로컬 우선, 삭제된 멤버 제외)
                     const localMemberIds = new Set(members.map(m => m.id));
-                    const newFirebaseMembers = firebaseMembers.filter(fm => !localMemberIds.has(fm.id));
+                    const newFirebaseMembers = filteredFirebaseMembers.filter(fm => !localMemberIds.has(fm.id));
                     members = [...members, ...newFirebaseMembers];
                 }
 
@@ -2490,6 +2494,7 @@
         function loadLocalData() {
             const savedMembers = localStorage.getItem('pickleball-members');
             const savedRecords = localStorage.getItem('pickleball-records');
+            const savedDeletedIds = localStorage.getItem('pickleball-deleted-members');
             
             if (savedMembers) {
                 members = JSON.parse(savedMembers);
@@ -2502,6 +2507,9 @@
                 });
             }
             if (savedRecords) gameRecords = JSON.parse(savedRecords);
+            if (savedDeletedIds) {
+                deletedMemberIds = new Set(JSON.parse(savedDeletedIds));
+            }
         }
 
         // 데이터 불러오기 (온라인/오프라인에 따라)
@@ -2551,6 +2559,7 @@
         function saveLocalData() {
             localStorage.setItem('pickleball-members', JSON.stringify(members));
             localStorage.setItem('pickleball-records', JSON.stringify(gameRecords));
+            localStorage.setItem('pickleball-deleted-members', JSON.stringify([...deletedMemberIds]));
         }
 
         // 데이터 저장 (온라인/오프라인에 따라)
@@ -2592,11 +2601,15 @@
                         }
                     });
                     
-                    // 로컬 데이터와 Firebase 데이터 병합 (Firebase 우선)
-                    members = firebaseMembers;
+                    // 삭제된 멤버 필터링
+                    const filteredFirebaseMembers = firebaseMembers.filter(member => !deletedMemberIds.has(member.id));
+                    
+                    // 로컬 데이터와 Firebase 데이터 병합 (삭제된 멤버 제외)
+                    members = filteredFirebaseMembers;
                     
                     // 로컬 스토리지 업데이트
                     localStorage.setItem('pickleball-members', JSON.stringify(members));
+                    localStorage.setItem('pickleball-deleted-members', JSON.stringify([...deletedMemberIds]));
                     
                     // UI 업데이트
                     renderAllPages();
@@ -3090,6 +3103,9 @@
                     // 실시간 동기화 플래그 설정 (무한 루프 방지)
                     window.isRealtimeSync = true;
                     
+                    // 삭제된 멤버 ID 추적에 추가
+                    deletedMemberIds.add(memberId);
+                    
                     // Firebase에서 해당 멤버 문서 삭제
                     if (window.db) {
                         const memberDoc = doc(window.db, 'members', memberId);
@@ -3101,6 +3117,7 @@
                     
                     // 로컬 스토리지 즉시 업데이트
                     localStorage.setItem('pickleball-members', JSON.stringify(members));
+                    localStorage.setItem('pickleball-deleted-members', JSON.stringify([...deletedMemberIds]));
                     
                     renderMembersPage();
                     renderGamePage();
@@ -4459,6 +4476,11 @@
                     // 실시간 동기화 플래그 설정 (무한 루프 방지)
                     window.isRealtimeSync = true;
                     
+                    // 모든 멤버 ID를 삭제 추적에 추가
+                    members.forEach(member => {
+                        deletedMemberIds.add(member.id);
+                    });
+                    
                     // Firebase에서 멤버 문서들 삭제
                     if (window.db) {
                         const membersSnapshot = await getDocs(collection(window.db, 'members'));
@@ -4475,6 +4497,7 @@
                     
                     // 로컬 스토리지에서도 멤버만 삭제
                     localStorage.removeItem('pickleball-members');
+                    localStorage.setItem('pickleball-deleted-members', JSON.stringify([...deletedMemberIds]));
                     
                     renderAllPages();
                     showSyncStatus('모든 멤버가 삭제되었습니다! (기록은 유지됨)', false);
