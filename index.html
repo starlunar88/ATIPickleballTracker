@@ -1529,7 +1529,8 @@
             border-radius: 12px;
             border: 2px solid #e2e8f0;
             transition: all 0.3s ease;
-            min-width: 200px;
+            flex: 1;
+            min-width: 0;
         }
 
         .rank-item:hover {
@@ -3240,12 +3241,6 @@
             filterRecords();
         }
 
-        // 시상식 페이지 렌더링
-        function renderStatisticsPage() {
-            updateMedalCeremony();
-            updateHallOfFame();
-            renderTopPlayers();
-        }
 
         // 메달 시상식 업데이트
         function updateMedalCeremony() {
@@ -4059,7 +4054,7 @@
             }
         }
 
-        // 통계 페이지 렌더링
+        // 시상식 페이지 렌더링
         function renderStatisticsPage() {
             // 전체 통계
             document.getElementById('total-games').textContent = gameRecords.length;
@@ -4178,9 +4173,12 @@
             // 최소 3경기 이상 참여한 선수만 필터링
             const eligiblePlayers = playerStats.filter(player => player.games >= 3);
             
-            const goldMedal = document.getElementById('gold-medal');
-            const silverMedal = document.getElementById('silver-medal');
-            const bronzeMedal = document.getElementById('bronze-medal');
+            const firstPlace = document.getElementById('first-place');
+            const firstScore = document.getElementById('first-score');
+            const secondPlace = document.getElementById('second-place');
+            const secondScore = document.getElementById('second-score');
+            const thirdPlace = document.getElementById('third-place');
+            const thirdScore = document.getElementById('third-score');
 
             // 중복 제거: 같은 선수가 여러 메달을 받지 않도록 처리
             const uniquePlayers = [];
@@ -4195,35 +4193,29 @@
 
             // 금메달 (1위 - 최고 점수)
             if (uniquePlayers.length > 0) {
-                goldMedal.classList.remove('empty');
-                goldMedal.querySelector('.medal-player').textContent = uniquePlayers[0].name;
-                goldMedal.querySelector('.medal-stats').textContent = `${uniquePlayers[0].score}점 (${uniquePlayers[0].wins}/${uniquePlayers[0].games})`;
+                firstPlace.textContent = uniquePlayers[0].name;
+                firstScore.textContent = `${uniquePlayers[0].score}점 (${uniquePlayers[0].wins}/${uniquePlayers[0].games})`;
             } else {
-                goldMedal.classList.add('empty');
-                goldMedal.querySelector('.medal-player').textContent = '메달 없음';
-                goldMedal.querySelector('.medal-stats').textContent = '최소 3경기 필요';
+                firstPlace.textContent = '메달 없음';
+                firstScore.textContent = '최소 3경기 필요';
             }
 
             // 은메달 (2위)
             if (uniquePlayers.length > 1) {
-                silverMedal.classList.remove('empty');
-                silverMedal.querySelector('.medal-player').textContent = uniquePlayers[1].name;
-                silverMedal.querySelector('.medal-stats').textContent = `${uniquePlayers[1].score}점 (${uniquePlayers[1].wins}/${uniquePlayers[1].games})`;
+                secondPlace.textContent = uniquePlayers[1].name;
+                secondScore.textContent = `${uniquePlayers[1].score}점 (${uniquePlayers[1].wins}/${uniquePlayers[1].games})`;
             } else {
-                silverMedal.classList.add('empty');
-                silverMedal.querySelector('.medal-player').textContent = '메달 없음';
-                silverMedal.querySelector('.medal-stats').textContent = '최소 3경기 필요';
+                secondPlace.textContent = '메달 없음';
+                secondScore.textContent = '최소 3경기 필요';
             }
 
             // 동메달 (3위)
             if (uniquePlayers.length > 2) {
-                bronzeMedal.classList.remove('empty');
-                bronzeMedal.querySelector('.medal-player').textContent = uniquePlayers[2].name;
-                bronzeMedal.querySelector('.medal-stats').textContent = `${uniquePlayers[2].score}점 (${uniquePlayers[2].wins}/${uniquePlayers[2].games})`;
+                thirdPlace.textContent = uniquePlayers[2].name;
+                thirdScore.textContent = `${uniquePlayers[2].score}점 (${uniquePlayers[2].wins}/${uniquePlayers[2].games})`;
             } else {
-                bronzeMedal.classList.add('empty');
-                bronzeMedal.querySelector('.medal-player').textContent = '메달 없음';
-                bronzeMedal.querySelector('.medal-stats').textContent = '최소 3경기 필요';
+                thirdPlace.textContent = '메달 없음';
+                thirdScore.textContent = '최소 3경기 필요';
             }
         }
 
