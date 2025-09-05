@@ -1481,7 +1481,7 @@
         }
 
         .podium-place.third {
-            height: 120px;
+            height: 140px;
             background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%);
             box-shadow: 0 4px 15px rgba(205, 127, 50, 0.4);
         }
@@ -3418,20 +3418,35 @@
 
         // 통계 페이지 렌더링
         function renderAnalyticsPage() {
+            console.log('renderAnalyticsPage 호출됨');
+            
             // 전체 통계 업데이트
             const totalGamesElement = document.getElementById('total-games');
             const totalMembersElement = document.getElementById('total-members');
             
             if (totalGamesElement) {
                 totalGamesElement.textContent = gameRecords.length;
+                console.log('총 경기 수 업데이트:', gameRecords.length);
+            } else {
+                console.log('total-games 요소를 찾을 수 없음');
             }
+            
             if (totalMembersElement) {
                 totalMembersElement.textContent = members.length;
+                console.log('총 멤버 수 업데이트:', members.length);
+            } else {
+                console.log('total-members 요소를 찾을 수 없음');
             }
             
             // 페이지가 완전히 로드된 후 차트 업데이트
             setTimeout(() => {
-                updateAllCharts();
+                console.log('차트 업데이트 시작');
+                try {
+                    updateAllCharts();
+                    console.log('차트 업데이트 완료');
+                } catch (error) {
+                    console.error('차트 업데이트 오류:', error);
+                }
             }, 100);
         }
 
@@ -4177,8 +4192,11 @@
 
         // 메달 시상식 렌더링 (점수 기준)
         function renderMedalCeremony(playerStats) {
+            console.log('renderMedalCeremony 호출됨, playerStats:', playerStats);
+            
             // 최소 3경기 이상 참여한 선수만 필터링
             const eligiblePlayers = playerStats.filter(player => player.games >= 3);
+            console.log('eligiblePlayers (3경기 이상):', eligiblePlayers);
             
             const firstPlace = document.getElementById('first-place');
             const firstScore = document.getElementById('first-score');
@@ -4217,10 +4235,14 @@
             }
 
             // 동메달 (3위)
+            console.log('uniquePlayers 길이:', uniquePlayers.length);
             if (uniquePlayers.length > 2) {
+                console.log('동메달 선수:', uniquePlayers[2]);
                 thirdPlace.textContent = uniquePlayers[2].name;
                 thirdScore.textContent = `${uniquePlayers[2].score}점 (${uniquePlayers[2].wins}/${uniquePlayers[2].games})`;
+                console.log('동메달 이름 설정됨:', uniquePlayers[2].name);
             } else {
+                console.log('동메달 선수 없음, uniquePlayers.length:', uniquePlayers.length);
                 thirdPlace.textContent = '메달 없음';
                 thirdScore.textContent = '최소 3경기 필요';
             }
