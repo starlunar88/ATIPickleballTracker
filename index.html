@@ -647,6 +647,18 @@
             font-weight: 500;
         }
 
+        .date-part {
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .time-part {
+            font-size: 9px;
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
         .history-teams {
             margin-bottom: 8px;
         }
@@ -682,19 +694,41 @@
         }
 
         /* 반응형 디자인 */
-        @media (max-width: 900px) {
+        @media (max-width: 768px) {
             #history-list {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 600px) {
-            #history-list {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
             }
             
             .history-item {
-                padding: 12px;
+                padding: 8px;
+            }
+            
+            .date-part {
+                font-size: 8px;
+            }
+            
+            .time-part {
+                font-size: 7px;
+            }
+            
+            .history-team {
+                font-size: 10px;
+            }
+            
+            .team-score {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #history-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            
+            .history-item {
+                padding: 6px;
             }
         }
 
@@ -2619,7 +2653,10 @@
                 return `
                     <div class="history-item">
                         <div class="history-header">
-                            <div class="history-date">${dateStr} ${timeStr}</div>
+                            <div class="history-date">
+                                <div class="date-part">${dateStr}</div>
+                                <div class="time-part">${timeStr}</div>
+                            </div>
                             <button onclick="deleteRecord('${record.id}')" style="background: #ef4444; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 9px; cursor: pointer;">삭제</button>
                         </div>
                         
