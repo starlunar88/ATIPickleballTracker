@@ -261,6 +261,17 @@
             margin-bottom: 6px;
         }
 
+        .no-members-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 14px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 2px dashed #d1d5db;
+        }
+
         .member-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             padding: 4px 2px;
@@ -2558,8 +2569,13 @@
             const savedRecords = localStorage.getItem('pickleball-records');
             const savedDeletedIds = localStorage.getItem('pickleball-deleted-members');
             
+            console.log('loadLocalData 호출됨');
+            console.log('savedMembers:', savedMembers);
+            console.log('savedRecords:', savedRecords);
+            
             if (savedMembers) {
                 members = JSON.parse(savedMembers);
+                console.log('로컬 멤버 로드됨:', members.length, '명');
                 // selectedAvatar 값이 유효한지 확인하고 기본값 설정 (더 강화된 검증)
                 members.forEach(member => {
                     if (member.selectedAvatar === undefined || member.selectedAvatar === null || 
@@ -2567,6 +2583,8 @@
                         member.selectedAvatar = -1; // 아바타 미선택 상태
                     }
                 });
+            } else {
+                console.log('로컬에 저장된 멤버 데이터가 없음');
             }
             if (savedRecords) gameRecords = JSON.parse(savedRecords);
             if (savedDeletedIds) {
@@ -2742,6 +2760,17 @@
         function renderGroupMembers() {
             const groupAContainer = document.getElementById('group-a-members');
             const groupBContainer = document.getElementById('group-b-members');
+            
+            console.log('renderGroupMembers 호출됨, members.length:', members.length);
+            console.log('members 배열:', members);
+            
+            // 멤버가 없을 때 처리
+            if (members.length === 0) {
+                console.log('멤버가 없어서 메시지 표시');
+                groupAContainer.innerHTML = '<div class="no-members-message">멤버가 없습니다. 멤버관리에서 멤버를 추가해주세요.</div>';
+                groupBContainer.innerHTML = '<div class="no-members-message">멤버가 없습니다. 멤버관리에서 멤버를 추가해주세요.</div>';
+                return;
+            }
             
             // 참여도 순으로 정렬 (멤버 이름으로 참여 횟수 계산)
             const sortedMembers = [...members].sort((a, b) => {
