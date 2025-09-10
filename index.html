@@ -272,6 +272,45 @@
             border: 2px dashed #d1d5db;
         }
 
+        .debug-section {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-info:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-1px);
+        }
+
         .member-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             padding: 4px 2px;
@@ -2277,6 +2316,15 @@
                 <div class="clear-section">
                     <button class="btn btn-danger" onclick="clearAllMembers()">모든 멤버 삭제</button>
                 </div>
+                
+                <div class="section">
+                    <h3>디버깅 도구</h3>
+                    <div class="debug-section">
+                        <button class="btn btn-warning" onclick="forceDeleteMember('정창섭')">정창섭 강제 삭제</button>
+                        <button class="btn btn-warning" onclick="clearDeletedMembers()">삭제 목록 초기화</button>
+                        <button class="btn btn-info" onclick="console.log('삭제된 멤버 ID:', [...deletedMemberIds]); console.log('삭제된 멤버 이름:', [...deletedMemberNames]);">삭제 목록 확인</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2696,13 +2744,25 @@
                     });
                     
                     // 삭제된 멤버 필터링 (ID와 이름 모두 확인)
-                    console.log('실시간 동기화 - 삭제된 멤버 ID:', [...deletedMemberIds]);
-                    console.log('실시간 동기화 - 삭제된 멤버 이름:', [...deletedMemberNames]);
-                    console.log('실시간 동기화 - Firebase 멤버들:', firebaseMembers.map(m => m.name));
-                    const filteredFirebaseMembers = firebaseMembers.filter(member => 
-                        !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name)
-                    );
-                    console.log('실시간 동기화 - 필터링된 멤버들:', filteredFirebaseMembers.map(m => m.name));
+                    console.log('=== 실시간 동기화 시작 ===');
+                    console.log('삭제된 멤버 ID:', [...deletedMemberIds]);
+                    console.log('삭제된 멤버 이름:', [...deletedMemberNames]);
+                    console.log('Firebase 멤버들:', firebaseMembers.map(m => `${m.name} (ID: ${m.id})`));
+                    
+                    const filteredFirebaseMembers = firebaseMembers.filter(member => {
+                        const isIdDeleted = deletedMemberIds.has(member.id);
+                        const isNameDeleted = deletedMemberNames.has(member.name);
+                        const shouldKeep = !isIdDeleted && !isNameDeleted;
+                        
+                        if (!shouldKeep) {
+                            console.log(`멤버 "${member.name}" 필터링됨 - ID삭제: ${isIdDeleted}, 이름삭제: ${isNameDeleted}`);
+                        }
+                        
+                        return shouldKeep;
+                    });
+                    
+                    console.log('필터링된 멤버들:', filteredFirebaseMembers.map(m => m.name));
+                    console.log('=== 실시간 동기화 완료 ===');
                     
                     // 로컬 데이터와 Firebase 데이터 병합 (삭제된 멤버 제외)
                     members = filteredFirebaseMembers;
@@ -3224,6 +3284,33 @@
             renderStatisticsPage();
         }
 
+        // 삭제된 멤버 목록 초기화 (디버깅용)
+        function clearDeletedMembers() {
+            if (confirm('삭제된 멤버 목록을 초기화하시겠습니까?\n이전에 삭제된 멤버들이 다시 나타날 수 있습니다.')) {
+                deletedMemberIds.clear();
+                deletedMemberNames.clear();
+                localStorage.removeItem('pickleball-deleted-members');
+                localStorage.removeItem('pickleball-deleted-names');
+                console.log('삭제된 멤버 목록이 초기화되었습니다.');
+                showSyncStatus('삭제된 멤버 목록이 초기화되었습니다.', false);
+            }
+        }
+
+        // 특정 멤버를 강제로 삭제 목록에 추가 (디버깅용)
+        function forceDeleteMember(memberName) {
+            if (confirm(`"${memberName}"을(를) 강제로 삭제 목록에 추가하시겠습니까?`)) {
+                deletedMemberNames.add(memberName);
+                localStorage.setItem('pickleball-deleted-names', JSON.stringify([...deletedMemberNames]));
+                console.log(`"${memberName}"이(가) 강제로 삭제 목록에 추가되었습니다.`);
+                showSyncStatus(`"${memberName}"이(가) 삭제 목록에 추가되었습니다.`, false);
+                
+                // 현재 멤버 목록에서도 제거
+                members = members.filter(m => m.name !== memberName);
+                localStorage.setItem('pickleball-members', JSON.stringify(members));
+                renderAllPages();
+            }
+        }
+
         // 개별 멤버 삭제 (기록은 유지)
         async function deleteMember(memberId) {
             if (confirm('정말로 이 멤버를 삭제하시겠습니까?\n경기 기록은 그대로 유지됩니다.')) {
@@ -3236,7 +3323,13 @@
                     if (memberToDelete) {
                         deletedMemberIds.add(memberId);
                         deletedMemberNames.add(memberToDelete.name);
-                        console.log('멤버 삭제됨:', memberId, memberToDelete.name, '삭제된 멤버 목록:', [...deletedMemberIds]);
+                        console.log('=== 멤버 삭제 시작 ===');
+                        console.log('삭제할 멤버:', memberToDelete.name, 'ID:', memberId);
+                        console.log('삭제된 멤버 ID 목록:', [...deletedMemberIds]);
+                        console.log('삭제된 멤버 이름 목록:', [...deletedMemberNames]);
+                    } else {
+                        console.error('삭제할 멤버를 찾을 수 없음:', memberId);
+                        return;
                     }
                     
                     // Firebase에서 해당 멤버 문서 삭제
@@ -3258,6 +3351,11 @@
                     renderHistoryPage();
                     renderStatisticsPage();
                     showSyncStatus('멤버가 삭제되었습니다!', false);
+                    
+                    console.log('=== 멤버 삭제 완료 ===');
+                    console.log('최종 삭제된 멤버 ID 목록:', [...deletedMemberIds]);
+                    console.log('최종 삭제된 멤버 이름 목록:', [...deletedMemberNames]);
+                    console.log('현재 멤버 목록:', members.map(m => m.name));
                     
                     // 실시간 동기화 플래그 해제
                     setTimeout(() => {
