@@ -2323,6 +2323,7 @@
                         <button class="btn btn-warning" onclick="forceDeleteMember('정창섭')">정창섭 강제 삭제</button>
                         <button class="btn btn-warning" onclick="clearDeletedMembers()">삭제 목록 초기화</button>
                         <button class="btn btn-info" onclick="console.log('삭제된 멤버 ID:', [...deletedMemberIds]); console.log('삭제된 멤버 이름:', [...deletedMemberNames]);">삭제 목록 확인</button>
+                        <button class="btn btn-danger" onclick="forceFilterDeletedMembers(); renderAllPages(); showSyncStatus('강제 필터링 완료', false);">강제 필터링</button>
                     </div>
                 </div>
             </div>
@@ -2568,18 +2569,44 @@
                 });
 
                 // 삭제된 멤버 필터링 (ID와 이름 모두 확인)
-                const filteredFirebaseMembers = firebaseMembers.filter(member => 
-                    !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name)
-                );
+                console.log('=== Firebase 데이터 로드 시작 ===');
+                console.log('삭제된 멤버 ID:', [...deletedMemberIds]);
+                console.log('삭제된 멤버 이름:', [...deletedMemberNames]);
+                console.log('Firebase 멤버들:', firebaseMembers.map(m => `${m.name} (ID: ${m.id})`));
+                
+                const filteredFirebaseMembers = firebaseMembers.filter(member => {
+                    const isIdDeleted = deletedMemberIds.has(member.id);
+                    const isNameDeleted = deletedMemberNames.has(member.name);
+                    const shouldKeep = !isIdDeleted && !isNameDeleted;
+                    
+                    if (!shouldKeep) {
+                        console.log(`Firebase 멤버 "${member.name}" 필터링됨 - ID삭제: ${isIdDeleted}, 이름삭제: ${isNameDeleted}`);
+                    }
+                    
+                    return shouldKeep;
+                });
+                
+                console.log('필터링된 Firebase 멤버들:', filteredFirebaseMembers.map(m => m.name));
                 
                 // 로컬 멤버가 있으면 로컬 우선, 없으면 Firebase 데이터 사용
                 if (members.length === 0) {
                     members = filteredFirebaseMembers;
+                    console.log('로컬 멤버 없음 - Firebase 멤버로 설정:', members.map(m => m.name));
                 } else {
+                    // 로컬 멤버도 삭제된 멤버 필터링 적용
+                    const filteredLocalMembers = members.filter(member => 
+                        !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name)
+                    );
+                    
+                    console.log('로컬 멤버 필터링 전:', members.map(m => m.name));
+                    console.log('로컬 멤버 필터링 후:', filteredLocalMembers.map(m => m.name));
+                    
                     // 로컬 멤버와 Firebase 멤버 병합 (로컬 우선, 삭제된 멤버 제외)
-                    const localMemberIds = new Set(members.map(m => m.id));
+                    const localMemberIds = new Set(filteredLocalMembers.map(m => m.id));
                     const newFirebaseMembers = filteredFirebaseMembers.filter(fm => !localMemberIds.has(fm.id));
-                    members = [...members, ...newFirebaseMembers];
+                    members = [...filteredLocalMembers, ...newFirebaseMembers];
+                    
+                    console.log('최종 병합된 멤버들:', members.map(m => m.name));
                 }
 
                 // Firebase에서 경기 기록 불러오기
@@ -2651,6 +2678,41 @@
                 deletedMemberNames = new Set(JSON.parse(savedDeletedNames));
                 console.log('삭제된 멤버 이름 로드됨:', [...deletedMemberNames]);
             }
+            
+            // 로컬 멤버에서 삭제된 멤버 필터링
+            if (members.length > 0) {
+                console.log('로컬 멤버 필터링 전:', members.map(m => m.name));
+                const originalCount = members.length;
+                members = members.filter(member => 
+                    !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name)
+                );
+                console.log('로컬 멤버 필터링 후:', members.map(m => m.name));
+                console.log(`로컬 멤버 ${originalCount}명에서 ${members.length}명으로 필터링됨`);
+            }
+        }
+
+        // 삭제된 멤버 강제 필터링 (페이지 로드 시마다 실행)
+        function forceFilterDeletedMembers() {
+            console.log('=== 삭제된 멤버 강제 필터링 시작 ===');
+            console.log('현재 멤버들:', members.map(m => m.name));
+            console.log('삭제된 멤버 ID:', [...deletedMemberIds]);
+            console.log('삭제된 멤버 이름:', [...deletedMemberNames]);
+            
+            const originalCount = members.length;
+            members = members.filter(member => 
+                !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name)
+            );
+            
+            console.log('필터링된 멤버들:', members.map(m => m.name));
+            console.log(`멤버 ${originalCount}명에서 ${members.length}명으로 필터링됨`);
+            
+            // 필터링된 결과를 로컬 스토리지에 저장
+            if (originalCount !== members.length) {
+                localStorage.setItem('pickleball-members', JSON.stringify(members));
+                console.log('필터링된 멤버 목록이 로컬 스토리지에 저장됨');
+            }
+            
+            console.log('=== 삭제된 멤버 강제 필터링 완료 ===');
         }
 
         // 데이터 불러오기 (온라인/오프라인에 따라)
@@ -2658,10 +2720,16 @@
             // 먼저 로컬 데이터 로드
             loadLocalData();
             
+            // 삭제된 멤버 강제 필터링
+            forceFilterDeletedMembers();
+            
             // 온라인이면 Firebase에서 추가 데이터 동기화
             if (isOnline && window.db) {
                 await loadDataFromFirebase();
             }
+            
+            // Firebase 동기화 후에도 다시 한 번 필터링
+            forceFilterDeletedMembers();
         }
 
         // Firebase에 데이터 저장
