@@ -272,44 +272,6 @@
             border: 2px dashed #d1d5db;
         }
 
-        .debug-section {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-warning:hover {
-            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-            transform: translateY(-1px);
-        }
-
-        .btn-info {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-info:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            transform: translateY(-1px);
-        }
 
         .member-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
@@ -2317,15 +2279,6 @@
                     <button class="btn btn-danger" onclick="clearAllMembers()">모든 멤버 삭제</button>
                 </div>
                 
-                <div class="section">
-                    <h3>디버깅 도구</h3>
-                    <div class="debug-section">
-                        <button class="btn btn-warning" onclick="forceDeleteMember('정창섭')">정창섭 강제 삭제</button>
-                        <button class="btn btn-warning" onclick="clearDeletedMembers()">삭제 목록 초기화</button>
-                        <button class="btn btn-info" onclick="console.log('삭제된 멤버 ID:', [...deletedMemberIds]); console.log('삭제된 멤버 이름:', [...deletedMemberNames]);">삭제 목록 확인</button>
-                        <button class="btn btn-danger" onclick="forceFilterDeletedMembers(); renderAllPages(); showSyncStatus('강제 필터링 완료', false);">강제 필터링</button>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -2575,6 +2528,12 @@
                 console.log('Firebase 멤버들:', firebaseMembers.map(m => `${m.name} (ID: ${m.id})`));
                 
                 const filteredFirebaseMembers = firebaseMembers.filter(member => {
+                    // 정창섭은 영구적으로 차단
+                    if (member.name === '정창섭') {
+                        console.log('정창섭이 Firebase에서 발견되어 차단됨');
+                        return false;
+                    }
+                    
                     const isIdDeleted = deletedMemberIds.has(member.id);
                     const isNameDeleted = deletedMemberNames.has(member.name);
                     const shouldKeep = !isIdDeleted && !isNameDeleted;
@@ -2593,10 +2552,15 @@
                     members = filteredFirebaseMembers;
                     console.log('로컬 멤버 없음 - Firebase 멤버로 설정:', members.map(m => m.name));
                 } else {
-                    // 로컬 멤버도 삭제된 멤버 필터링 적용
-                    const filteredLocalMembers = members.filter(member => 
-                        !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name)
-                    );
+                    // 로컬 멤버도 삭제된 멤버 필터링 적용 (정창섭 포함)
+                    const filteredLocalMembers = members.filter(member => {
+                        // 정창섭은 영구적으로 차단
+                        if (member.name === '정창섭') {
+                            console.log('정창섭이 로컬 멤버에서 발견되어 차단됨');
+                            return false;
+                        }
+                        return !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name);
+                    });
                     
                     console.log('로컬 멤버 필터링 전:', members.map(m => m.name));
                     console.log('로컬 멤버 필터링 후:', filteredLocalMembers.map(m => m.name));
@@ -2679,13 +2643,18 @@
                 console.log('삭제된 멤버 이름 로드됨:', [...deletedMemberNames]);
             }
             
-            // 로컬 멤버에서 삭제된 멤버 필터링
+            // 로컬 멤버에서 삭제된 멤버 필터링 (정창섭 포함)
             if (members.length > 0) {
                 console.log('로컬 멤버 필터링 전:', members.map(m => m.name));
                 const originalCount = members.length;
-                members = members.filter(member => 
-                    !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name)
-                );
+                members = members.filter(member => {
+                    // 정창섭은 영구적으로 차단
+                    if (member.name === '정창섭') {
+                        console.log('정창섭이 로컬 스토리지에서 발견되어 차단됨');
+                        return false;
+                    }
+                    return !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name);
+                });
                 console.log('로컬 멤버 필터링 후:', members.map(m => m.name));
                 console.log(`로컬 멤버 ${originalCount}명에서 ${members.length}명으로 필터링됨`);
             }
@@ -2699,9 +2668,14 @@
             console.log('삭제된 멤버 이름:', [...deletedMemberNames]);
             
             const originalCount = members.length;
-            members = members.filter(member => 
-                !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name)
-            );
+            members = members.filter(member => {
+                // 정창섭은 영구적으로 차단
+                if (member.name === '정창섭') {
+                    console.log('정창섭이 강제 필터링에서 발견되어 차단됨');
+                    return false;
+                }
+                return !deletedMemberIds.has(member.id) && !deletedMemberNames.has(member.name);
+            });
             
             console.log('필터링된 멤버들:', members.map(m => m.name));
             console.log(`멤버 ${originalCount}명에서 ${members.length}명으로 필터링됨`);
@@ -2818,6 +2792,12 @@
                     console.log('Firebase 멤버들:', firebaseMembers.map(m => `${m.name} (ID: ${m.id})`));
                     
                     const filteredFirebaseMembers = firebaseMembers.filter(member => {
+                        // 정창섭은 영구적으로 차단
+                        if (member.name === '정창섭') {
+                            console.log('정창섭이 실시간 동기화에서 발견되어 차단됨');
+                            return false;
+                        }
+                        
                         const isIdDeleted = deletedMemberIds.has(member.id);
                         const isNameDeleted = deletedMemberNames.has(member.name);
                         const shouldKeep = !isIdDeleted && !isNameDeleted;
@@ -3314,6 +3294,12 @@
             const newMembers = [];
             
             names.forEach(name => {
+                // 정창섭은 영구적으로 차단
+                if (name === '정창섭') {
+                    alert('정창섭은 추가할 수 없습니다.');
+                    return;
+                }
+                
                 if (name && !members.find(m => m.name === name) && !deletedMemberNames.has(name)) {
                     const newMember = {
                         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -3352,32 +3338,6 @@
             renderStatisticsPage();
         }
 
-        // 삭제된 멤버 목록 초기화 (디버깅용)
-        function clearDeletedMembers() {
-            if (confirm('삭제된 멤버 목록을 초기화하시겠습니까?\n이전에 삭제된 멤버들이 다시 나타날 수 있습니다.')) {
-                deletedMemberIds.clear();
-                deletedMemberNames.clear();
-                localStorage.removeItem('pickleball-deleted-members');
-                localStorage.removeItem('pickleball-deleted-names');
-                console.log('삭제된 멤버 목록이 초기화되었습니다.');
-                showSyncStatus('삭제된 멤버 목록이 초기화되었습니다.', false);
-            }
-        }
-
-        // 특정 멤버를 강제로 삭제 목록에 추가 (디버깅용)
-        function forceDeleteMember(memberName) {
-            if (confirm(`"${memberName}"을(를) 강제로 삭제 목록에 추가하시겠습니까?`)) {
-                deletedMemberNames.add(memberName);
-                localStorage.setItem('pickleball-deleted-names', JSON.stringify([...deletedMemberNames]));
-                console.log(`"${memberName}"이(가) 강제로 삭제 목록에 추가되었습니다.`);
-                showSyncStatus(`"${memberName}"이(가) 삭제 목록에 추가되었습니다.`, false);
-                
-                // 현재 멤버 목록에서도 제거
-                members = members.filter(m => m.name !== memberName);
-                localStorage.setItem('pickleball-members', JSON.stringify(members));
-                renderAllPages();
-            }
-        }
 
         // 개별 멤버 삭제 (기록은 유지)
         async function deleteMember(memberId) {
