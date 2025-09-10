@@ -511,6 +511,95 @@
             justify-content: center;
             min-width: 14px;
             height: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        /* 새로운 훈장들의 특별한 스타일링 */
+        .badge[data-badge="comeback"] {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+            animation: comeback-glow 2s ease-in-out infinite alternate;
+        }
+        
+        .badge[data-badge="clutch"] {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
+            animation: clutch-pulse 1.5s ease-in-out infinite;
+        }
+        
+        .badge[data-badge="marathon"] {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            box-shadow: 0 2px 8px rgba(255, 154, 158, 0.4);
+            animation: marathon-run 3s linear infinite;
+        }
+        
+        .badge[data-badge="rookie"] {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            box-shadow: 0 2px 8px rgba(168, 237, 234, 0.4);
+            animation: rookie-sparkle 2s ease-in-out infinite;
+        }
+        
+        .badge[data-badge="veteran"] {
+            background: linear-gradient(135deg, #d299c2, #fef9d7);
+            box-shadow: 0 2px 8px rgba(210, 153, 194, 0.4);
+            border: 2px solid #8b5a96;
+        }
+        
+        .badge[data-badge="perfectionist"] {
+            background: linear-gradient(135deg, #ffd89b, #19547b);
+            box-shadow: 0 2px 8px rgba(255, 216, 155, 0.4);
+            animation: perfect-shine 2s ease-in-out infinite;
+        }
+        
+        .badge[data-badge="fighter"] {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
+            animation: fighter-power 1s ease-in-out infinite alternate;
+        }
+        
+        .badge[data-badge="strategist"] {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            animation: strategy-think 3s ease-in-out infinite;
+        }
+        
+        /* 애니메이션 효과들 */
+        @keyframes comeback-glow {
+            0% { box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4); }
+            100% { box-shadow: 0 4px 16px rgba(255, 107, 107, 0.8); }
+        }
+        
+        @keyframes clutch-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes marathon-run {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes rookie-sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes perfect-shine {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+            100% { filter: brightness(1); }
+        }
+        
+        @keyframes fighter-power {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        
+        @keyframes strategy-think {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(1deg); }
+            75% { transform: rotate(-1deg); }
         }
 
         .member-card.selected .badge {
@@ -1656,6 +1745,57 @@
             border: 2px solid #f59e0b;
             text-align: center;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 새로운 업적 카드들의 특별한 스타일링 */
+        .achievement-card[data-achievement="comeback"] {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            border-color: #e53e3e;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+        
+        .achievement-card[data-achievement="clutch"] {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            border-color: #38a169;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+        
+        .achievement-card[data-achievement="marathon"] {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-color: #e91e63;
+            box-shadow: 0 4px 12px rgba(255, 154, 158, 0.3);
+        }
+        
+        .achievement-card[data-achievement="rookie"] {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-color: #00bcd4;
+            box-shadow: 0 4px 12px rgba(168, 237, 234, 0.3);
+        }
+        
+        .achievement-card[data-achievement="veteran"] {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+            border-color: #8b5a96;
+            box-shadow: 0 4px 12px rgba(210, 153, 194, 0.3);
+        }
+        
+        .achievement-card[data-achievement="perfectionist"] {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            border-color: #f59e0b;
+            box-shadow: 0 4px 12px rgba(255, 216, 155, 0.3);
+        }
+        
+        .achievement-card[data-achievement="fighter"] {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            border-color: #dc2626;
+            box-shadow: 0 4px 12px rgba(255, 65, 108, 0.3);
+        }
+        
+        .achievement-card[data-achievement="strategist"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #5a67d8;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .achievement-card:hover {
@@ -1958,7 +2098,7 @@
                     <h1>피클볼 스코어 트래커<span class="title-emoji">🎾</span></h1>
                 </div>
                 <div class="header-right">
-                    <div class="version-info">v1.0.5</div>
+                    <div class="version-info">v1.0.6</div>
                 </div>
             </div>
 
@@ -2725,7 +2865,7 @@
                             ).join('')}
                         </div>
                         <div class="member-badges">
-                            ${memberBadges.map(badge => `<div class="badge">${badges[badge].emoji}</div>`).join('')}
+                            ${memberBadges.map(badge => `<div class="badge" data-badge="${badge}">${badges[badge].emoji}</div>`).join('')}
                         </div>
                     </div>
                 `;
@@ -2764,7 +2904,7 @@
                             ).join('')}
                         </div>
                         <div class="member-badges">
-                            ${memberBadges.map(badge => `<div class="badge">${badges[badge].emoji}</div>`).join('')}
+                            ${memberBadges.map(badge => `<div class="badge" data-badge="${badge}">${badges[badge].emoji}</div>`).join('')}
                         </div>
                     </div>
                 `;
@@ -3186,7 +3326,16 @@
             diamond: { emoji: '💎', name: '다이아몬드', description: '10경기 이상, 승률 70% 이상 달성한 선수' },
             crown: { emoji: '👑', name: '왕관', description: '10경기 이상, 승률 90% 이상 달성한 선수' },
             struggle: { emoji: '😅', name: '분발', description: '10경기 이상, 승률 30% 미만인 선수 (분발이 필요합니다!)' },
-            challenge: { emoji: '💪', name: '도전', description: '10경기 이상, 승률 10% 미만인 선수 (더 많은 연습이 필요합니다!)' }
+            challenge: { emoji: '🥶', name: '도전', description: '10경기 이상, 승률 10% 미만인 선수 (더 많은 연습이 필요합니다!)' },
+            // 새로운 의미있는 훈장들
+            comeback: { emoji: '🚀', name: '컴백킹', description: '3연패 후 연승을 기록한 선수' },
+            clutch: { emoji: '⚡', name: '클러치', description: '승률 50% 미만에서 3연승 이상 달성한 선수' },
+            marathon: { emoji: '🏃‍♂️', name: '마라톤', description: '하루에 5경기 이상 참여한 선수' },
+            rookie: { emoji: '🌟', name: '신예', description: '첫 경기에서 승리한 선수' },
+            veteran: { emoji: '🎖️', name: '베테랑', description: '50경기 이상 참여한 선수' },
+            perfectionist: { emoji: '💯', name: '완벽주의자', description: '10경기 이상, 승률 100% 달성한 선수' },
+            fighter: { emoji: '🥊', name: '파이터', description: '연패 중에도 포기하지 않는 선수 (5연패 이상)' },
+            strategist: { emoji: '🧠', name: '전략가', description: '다양한 팀원과 승률 60% 이상 달성한 선수' }
         };
 
         // 피클볼 스타일 계급 시스템 정의 (단일 이모티콘)
@@ -3293,6 +3442,99 @@
                 memberBadges.push('challenge');
             }
             
+            // 새로운 훈장들 체크
+            // 컴백킹: 3연패 후 연승 기록
+            let hasComeback = false;
+            let consecutiveLosses = 0;
+            for (let i = 0; i < memberGames.length; i++) {
+                const game = memberGames[i];
+                const isInGroupA = game.groupAMembers.includes(memberName);
+                const isWin = (isInGroupA && game.winner === 'A') || (!isInGroupA && game.winner === 'B');
+                
+                if (!isWin) {
+                    consecutiveLosses++;
+                } else {
+                    if (consecutiveLosses >= 3) {
+                        hasComeback = true;
+                        break;
+                    }
+                    consecutiveLosses = 0;
+                }
+            }
+            if (hasComeback) {
+                memberBadges.push('comeback');
+            }
+            
+            // 클러치: 승률 50% 미만에서 3연승 이상
+            if (winRate < 50 && maxStreak >= 3) {
+                memberBadges.push('clutch');
+            }
+            
+            // 마라톤: 하루에 5경기 이상 참여 (같은 날짜의 경기 수 체크)
+            const gamesByDate = {};
+            memberGames.forEach(game => {
+                const date = game.date;
+                gamesByDate[date] = (gamesByDate[date] || 0) + 1;
+            });
+            const maxGamesInDay = Math.max(...Object.values(gamesByDate));
+            if (maxGamesInDay >= 5) {
+                memberBadges.push('marathon');
+            }
+            
+            // 신예: 첫 경기에서 승리
+            if (memberGames.length >= 1) {
+                const firstGame = memberGames[0];
+                const isInGroupA = firstGame.groupAMembers.includes(memberName);
+                const isFirstWin = (isInGroupA && firstGame.winner === 'A') || (!isInGroupA && firstGame.winner === 'B');
+                if (isFirstWin) {
+                    memberBadges.push('rookie');
+                }
+            }
+            
+            // 베테랑: 50경기 이상 참여
+            if (memberGames.length >= 50) {
+                memberBadges.push('veteran');
+            }
+            
+            // 완벽주의자: 10경기 이상, 승률 100%
+            if (memberGames.length >= 10 && winRate === 100) {
+                memberBadges.push('perfectionist');
+            }
+            
+            // 파이터: 5연패 이상 기록
+            let maxConsecutiveLosses = 0;
+            let currentLossStreak = 0;
+            for (let i = 0; i < memberGames.length; i++) {
+                const game = memberGames[i];
+                const isInGroupA = game.groupAMembers.includes(memberName);
+                const isWin = (isInGroupA && game.winner === 'A') || (!isInGroupA && game.winner === 'B');
+                
+                if (!isWin) {
+                    currentLossStreak++;
+                    maxConsecutiveLosses = Math.max(maxConsecutiveLosses, currentLossStreak);
+                } else {
+                    currentLossStreak = 0;
+                }
+            }
+            if (maxConsecutiveLosses >= 5) {
+                memberBadges.push('fighter');
+            }
+            
+            // 전략가: 다양한 팀원과 승률 60% 이상 (팀원 다양성 체크)
+            const teammates = new Set();
+            memberGames.forEach(game => {
+                const isInGroupA = game.groupAMembers.includes(memberName);
+                const teamMembers = isInGroupA ? game.groupAMembers : game.groupBMembers;
+                teamMembers.forEach(member => {
+                    if (member !== memberName) {
+                        teammates.add(member);
+                    }
+                });
+            });
+            if (teammates.size >= 5 && winRate >= 60) {
+                memberBadges.push('strategist');
+            }
+            
             return memberBadges;
         }
 
@@ -3385,19 +3627,162 @@
                 });
             }
             
+            // 새로운 업적 카테고리들
+            // 최장 연승 기록
+            const longestStreak = Object.entries(playerStats)
+                .filter(([name, stats]) => stats.games >= 3)
+                .map(([name, stats]) => {
+                    const memberGames = gameRecords.filter(r => 
+                        r.groupAMembers.includes(name) || r.groupBMembers.includes(name)
+                    ).sort((a, b) => new Date(a.date) - new Date(b.date));
+                    
+                    let maxStreak = 0;
+                    let currentStreak = 0;
+                    
+                    for (let i = 0; i < memberGames.length; i++) {
+                        const game = memberGames[i];
+                        const isInGroupA = game.groupAMembers.includes(name);
+                        const isWin = (isInGroupA && game.winner === 'A') || (!isInGroupA && game.winner === 'B');
+                        
+                        if (isWin) {
+                            currentStreak++;
+                            maxStreak = Math.max(maxStreak, currentStreak);
+                        } else {
+                            currentStreak = 0;
+                        }
+                    }
+                    
+                    return { name, maxStreak };
+                })
+                .sort((a, b) => b.maxStreak - a.maxStreak)[0];
+            
+            if (longestStreak && longestStreak.maxStreak > 0) {
+                achievements.push({
+                    title: '🔥 최장 연승',
+                    player: longestStreak.name,
+                    value: `${longestStreak.maxStreak}연승`,
+                    description: '가장 긴 연승 기록을 세운 선수'
+                });
+            }
+            
+            // 완벽주의자 (승률 100%)
+            const perfectPlayers = Object.entries(playerStats)
+                .filter(([name, stats]) => stats.games >= 5 && (stats.wins / stats.games) === 1)
+                .sort((a, b) => b[1].games - a[1].games);
+            
+            if (perfectPlayers.length > 0) {
+                const perfectPlayer = perfectPlayers[0];
+                achievements.push({
+                    title: '💯 완벽주의자',
+                    player: perfectPlayer[0],
+                    value: `${perfectPlayer[1].games}경기`,
+                    description: '5경기 이상에서 승률 100% 달성'
+                });
+            }
+            
+            // 베테랑 (50경기 이상)
+            const veterans = Object.entries(playerStats)
+                .filter(([name, stats]) => stats.games >= 50)
+                .sort((a, b) => b[1].games - a[1].games);
+            
+            if (veterans.length > 0) {
+                const veteran = veterans[0];
+                achievements.push({
+                    title: '🎖️ 베테랑',
+                    player: veteran[0],
+                    value: `${veteran[1].games}경기`,
+                    description: '50경기 이상 참여한 경험 많은 선수'
+                });
+            }
+            
+            // 컴백킹 (3연패 후 연승)
+            const comebackPlayers = Object.entries(playerStats)
+                .filter(([name, stats]) => {
+                    const memberGames = gameRecords.filter(r => 
+                        r.groupAMembers.includes(name) || r.groupBMembers.includes(name)
+                    ).sort((a, b) => new Date(a.date) - new Date(b.date));
+                    
+                    let consecutiveLosses = 0;
+                    for (let i = 0; i < memberGames.length; i++) {
+                        const game = memberGames[i];
+                        const isInGroupA = game.groupAMembers.includes(name);
+                        const isWin = (isInGroupA && game.winner === 'A') || (!isInGroupA && game.winner === 'B');
+                        
+                        if (!isWin) {
+                            consecutiveLosses++;
+                        } else {
+                            if (consecutiveLosses >= 3) {
+                                return true;
+                            }
+                            consecutiveLosses = 0;
+                        }
+                    }
+                    return false;
+                });
+            
+            if (comebackPlayers.length > 0) {
+                achievements.push({
+                    title: '🚀 컴백킹',
+                    player: comebackPlayers[0][0],
+                    value: '3연패 후 연승',
+                    description: '절망적인 상황에서도 포기하지 않은 선수'
+                });
+            }
+            
+            // 마라톤러 (하루 최다 경기)
+            const marathonRunners = Object.entries(playerStats)
+                .map(([name, stats]) => {
+                    const memberGames = gameRecords.filter(r => 
+                        r.groupAMembers.includes(name) || r.groupBMembers.includes(name)
+                    );
+                    
+                    const gamesByDate = {};
+                    memberGames.forEach(game => {
+                        const date = game.date;
+                        gamesByDate[date] = (gamesByDate[date] || 0) + 1;
+                    });
+                    
+                    const maxGamesInDay = Math.max(...Object.values(gamesByDate));
+                    return { name, maxGamesInDay };
+                })
+                .filter(player => player.maxGamesInDay >= 5)
+                .sort((a, b) => b.maxGamesInDay - a.maxGamesInDay);
+            
+            if (marathonRunners.length > 0) {
+                achievements.push({
+                    title: '🏃‍♂️ 마라톤러',
+                    player: marathonRunners[0].name,
+                    value: `${marathonRunners[0].maxGamesInDay}경기`,
+                    description: '하루에 가장 많은 경기를 소화한 선수'
+                });
+            }
+            
             if (achievements.length === 0) {
                 hallOfFameContainer.innerHTML = '<div class="no-data">아직 업적이 없습니다.</div>';
                 return;
             }
             
-            hallOfFameContainer.innerHTML = achievements.map(achievement => `
-                <div class="achievement-card">
+            hallOfFameContainer.innerHTML = achievements.map(achievement => {
+                // 업적 타입에 따른 data-achievement 속성 결정
+                let achievementType = 'default';
+                if (achievement.title.includes('컴백킹')) achievementType = 'comeback';
+                else if (achievement.title.includes('클러치')) achievementType = 'clutch';
+                else if (achievement.title.includes('마라톤')) achievementType = 'marathon';
+                else if (achievement.title.includes('신예')) achievementType = 'rookie';
+                else if (achievement.title.includes('베테랑')) achievementType = 'veteran';
+                else if (achievement.title.includes('완벽주의자')) achievementType = 'perfectionist';
+                else if (achievement.title.includes('파이터')) achievementType = 'fighter';
+                else if (achievement.title.includes('전략가')) achievementType = 'strategist';
+                
+                return `
+                <div class="achievement-card" data-achievement="${achievementType}">
                     <div class="achievement-title">${achievement.title}</div>
                     <div class="achievement-player">${achievement.player}</div>
                     <div class="achievement-value">${achievement.value}</div>
                     <div class="achievement-description">${achievement.description}</div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         // 선수 통계 계산
