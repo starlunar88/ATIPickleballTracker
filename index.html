@@ -515,17 +515,6 @@
         }
         
         /* 새로운 훈장들의 특별한 스타일링 */
-        .badge[data-badge="comeback"] {
-            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
-            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
-            animation: comeback-glow 2s ease-in-out infinite alternate;
-        }
-        
-        .badge[data-badge="clutch"] {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
-            animation: clutch-pulse 1.5s ease-in-out infinite;
-        }
         
         
         .badge[data-badge="veteran"] {
@@ -548,15 +537,6 @@
         
         
         /* 애니메이션 효과들 */
-        @keyframes comeback-glow {
-            0% { box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4); }
-            100% { box-shadow: 0 4px 16px rgba(255, 107, 107, 0.8); }
-        }
-        
-        @keyframes clutch-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
         
         
         @keyframes perfect-shine {
@@ -1719,17 +1699,6 @@
         }
         
         /* 새로운 업적 카드들의 특별한 스타일링 */
-        .achievement-card[data-achievement="comeback"] {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-            border-color: #e53e3e;
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-        }
-        
-        .achievement-card[data-achievement="clutch"] {
-            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-            border-color: #38a169;
-            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
-        }
         
         
         .achievement-card[data-achievement="veteran"] {
@@ -3289,15 +3258,13 @@
         // 훈장 시스템 정의
         const badges = {
             medal: { emoji: '🏅', name: '메달', description: '5연승 이상 기록한 선수' },
+            perfectionist: { emoji: '💯', name: '완벽주의자', description: '10연승 달성한 선수' },
             diamond: { emoji: '💎', name: '다이아몬드', description: '10경기 이상, 승률 70% 이상 달성한 선수' },
             crown: { emoji: '👑', name: '왕관', description: '10경기 이상, 승률 90% 이상 달성한 선수' },
             struggle: { emoji: '😅', name: '분발', description: '10경기 이상, 승률 30% 미만인 선수 (분발이 필요합니다!)' },
             challenge: { emoji: '🥶', name: '도전', description: '10경기 이상, 승률 10% 미만인 선수 (더 많은 연습이 필요합니다!)' },
             // 새로운 의미있는 훈장들
-            comeback: { emoji: '🚀', name: '컴백킹', description: '3연패 후 연승을 기록한 선수' },
-            clutch: { emoji: '⚡', name: '클러치', description: '승률 50% 미만에서 3연승 이상 달성한 선수' },
             veteran: { emoji: '🎖️', name: '베테랑', description: '50경기 이상 참여한 선수' },
-            perfectionist: { emoji: '💯', name: '완벽주의자', description: '10경기 이상, 승률 100% 달성한 선수' },
             fighter: { emoji: '🥊', name: '파이터', description: '연패 중에도 포기하지 않는 선수 (5연패 이상)' }
         };
 
