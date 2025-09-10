@@ -2816,7 +2816,7 @@
                             ).join('')}
                         </div>
                         <div class="member-badges">
-                            ${memberBadges.map(badge => `<div class="badge" data-badge="${badge}">${badges[badge].emoji}</div>`).join('')}
+                            ${memberBadges.map(badge => badges[badge] ? `<div class="badge" data-badge="${badge}">${badges[badge].emoji}</div>` : '').join('')}
                         </div>
                     </div>
                 `;
@@ -2855,7 +2855,7 @@
                             ).join('')}
                         </div>
                         <div class="member-badges">
-                            ${memberBadges.map(badge => `<div class="badge" data-badge="${badge}">${badges[badge].emoji}</div>`).join('')}
+                            ${memberBadges.map(badge => badges[badge] ? `<div class="badge" data-badge="${badge}">${badges[badge].emoji}</div>` : '').join('')}
                         </div>
                     </div>
                 `;
@@ -3398,32 +3398,6 @@
             }
             
             // 새로운 훈장들 체크
-            // 컴백킹: 3연패 후 연승 기록
-            let hasComeback = false;
-            let consecutiveLosses = 0;
-            for (let i = 0; i < memberGames.length; i++) {
-                const game = memberGames[i];
-                const isInGroupA = game.groupAMembers.includes(memberName);
-                const isWin = (isInGroupA && game.winner === 'A') || (!isInGroupA && game.winner === 'B');
-                
-                if (!isWin) {
-                    consecutiveLosses++;
-                } else {
-                    if (consecutiveLosses >= 3) {
-                        hasComeback = true;
-                        break;
-                    }
-                    consecutiveLosses = 0;
-                }
-            }
-            if (hasComeback) {
-                memberBadges.push('comeback');
-            }
-            
-            // 클러치: 승률 50% 미만에서 3연승 이상
-            if (winRate < 50 && maxStreak >= 3) {
-                memberBadges.push('clutch');
-            }
             
             
             
@@ -3432,8 +3406,8 @@
                 memberBadges.push('veteran');
             }
             
-            // 완벽주의자: 10경기 이상, 승률 100%
-            if (memberGames.length >= 10 && winRate === 100) {
+            // 완벽주의자: 10연승 달성
+            if (maxStreak >= 10) {
                 memberBadges.push('perfectionist');
             }
             
