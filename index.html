@@ -539,7 +539,8 @@
             left: 100%;
             top: 50%;
             transform: translateY(-50%);
-            background: #000000;
+            background: #000000 !important;
+            background-color: #000000 !important;
             color: white;
             padding: 8px 12px;
             border-radius: 6px;
@@ -566,12 +567,23 @@
             top: 50%;
             transform: translateY(-50%);
             border: 5px solid transparent;
-            border-right-color: #000000;
+            border-right-color: #000000 !important;
         }
 
         .badge:hover .badge-tooltip {
             opacity: 1;
             visibility: visible;
+        }
+
+        /* 툴팁 불투명도 강제 적용 */
+        .member-badges .badge .badge-tooltip {
+            background: #000000 !important;
+            background-color: #000000 !important;
+            opacity: 1 !important;
+        }
+
+        .member-badges .badge .badge-tooltip::after {
+            border-right-color: #000000 !important;
         }
         
         /* 새로운 훈장들의 특별한 스타일링 */
