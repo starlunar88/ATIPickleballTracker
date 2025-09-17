@@ -4268,8 +4268,10 @@
             
             const data = worstTeams.map(([team, stats]) => {
                 const winRate = Math.round(stats.winRate * 100);
-                console.log(`팀 ${team}: 승률 ${winRate}% (${stats.wins}승 ${stats.total - stats.wins}패)`);
-                return winRate;
+                // 0% 승률도 시각적으로 보이도록 최소 1%로 설정
+                const displayRate = winRate === 0 ? 1 : winRate;
+                console.log(`팀 ${team}: 승률 ${winRate}% (${stats.wins}승 ${stats.total - stats.wins}패) -> 표시: ${displayRate}%`);
+                return displayRate;
             });
             
             console.log('차트 라벨:', labels);
@@ -4285,7 +4287,8 @@
                             data: data,
                             backgroundColor: '#ef4444',
                             borderColor: '#dc2626',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            minBarLength: 2 // 최소 막대 길이 설정
                         }]
                     },
                     options: {
@@ -4296,10 +4299,20 @@
                             x: {
                                 beginAtZero: true,
                                 max: 100,
+                                min: 0,
                                 ticks: {
                                     callback: function(value) {
                                         return value + '%';
-                                    }
+                                    },
+                                    stepSize: 20
+                                },
+                                grid: {
+                                    display: true
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
                                 }
                             }
                         },
@@ -4316,9 +4329,16 @@
                                     label: function(context) {
                                         const index = context.dataIndex;
                                         const stats = worstTeams[index][1];
-                                        return `승률: ${context.parsed.x}% (${stats.wins}승 ${stats.total - stats.wins}패)`;
+                                        const actualWinRate = Math.round(stats.winRate * 100);
+                                        return `실제 승률: ${actualWinRate}% (${stats.wins}승 ${stats.total - stats.wins}패)`;
                                     }
                                 }
+                            }
+                        },
+                        elements: {
+                            bar: {
+                                borderWidth: 1,
+                                borderSkipped: false
                             }
                         }
                     }
