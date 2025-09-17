@@ -549,7 +549,7 @@
             margin-left: 8px;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.2s ease;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
             pointer-events: none;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             max-width: 250px;
@@ -584,6 +584,18 @@
 
         .member-badges .badge .badge-tooltip::after {
             border-right-color: #000000 !important;
+        }
+
+        /* 모든 툴팁에 강제 적용 */
+        .badge-tooltip[style*="background"] {
+            background: #000000 !important;
+            background-color: #000000 !important;
+        }
+
+        /* 추가 강제 규칙 */
+        div.badge-tooltip {
+            background: #000000 !important;
+            background-color: #000000 !important;
         }
         
         /* 새로운 훈장들의 특별한 스타일링 */
@@ -3028,7 +3040,7 @@
                             ${memberBadges.map(badge => badges[badge] ? `
                                 <div class="badge" data-badge="${badge}">
                                     ${badges[badge].emoji}
-                                    <div class="badge-tooltip">
+                                    <div class="badge-tooltip" style="background: #000000 !important; background-color: #000000 !important;">
                                         <strong>${badges[badge].name}</strong><br>
                                         ${badges[badge].description.replace(/\([^)]*\)/g, '').trim()}
                                     </div>
@@ -3075,7 +3087,7 @@
                             ${memberBadges.map(badge => badges[badge] ? `
                                 <div class="badge" data-badge="${badge}">
                                     ${badges[badge].emoji}
-                                    <div class="badge-tooltip">
+                                    <div class="badge-tooltip" style="background: #000000 !important; background-color: #000000 !important;">
                                         <strong>${badges[badge].name}</strong><br>
                                         ${badges[badge].description.replace(/\([^)]*\)/g, '').trim()}
                                     </div>
