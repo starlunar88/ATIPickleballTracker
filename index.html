@@ -3907,6 +3907,7 @@
             console.log('=== 통계 페이지 렌더링 시작 ===');
             console.log('현재 게임 기록 수:', gameRecords.length);
             console.log('현재 멤버 수:', members.length);
+            console.log('게임 기록 내용:', gameRecords);
             
             // Chart.js 라이브러리 확인
             if (typeof Chart === 'undefined') {
@@ -3942,7 +3943,18 @@
                 } catch (error) {
                     console.error('차트 업데이트 오류:', error);
                 }
-            }, 200); // 시간을 조금 더 늘림
+            }, 300); // 시간을 더 늘림
+            
+            // 추가로 최약팀 차트만 강제로 다시 그리기
+            setTimeout(() => {
+                console.log('최약팀 차트 강제 업데이트');
+                try {
+                    const allRecords = getFilteredGameRecords();
+                    updateWorstTeamComboChart(allRecords);
+                } catch (error) {
+                    console.error('최약팀 차트 강제 업데이트 오류:', error);
+                }
+            }, 500);
         }
 
         // 통계 기간 선택
@@ -4000,29 +4012,52 @@
 
         // 모든 차트 업데이트
         function updateAllCharts() {
-            console.log('updateAllCharts 시작');
+            console.log('=== updateAllCharts 시작 ===');
             const filteredRecords = getFilteredGameRecords();
             console.log('필터링된 기록:', filteredRecords.length, '개');
+            console.log('필터링된 기록 내용:', filteredRecords);
             
-            // 차트 업데이트를 순차적으로 실행하여 안정성 확보
-            const chartUpdates = [
-                { name: '승률 차트', fn: () => updateWinRateChart(filteredRecords) },
-                { name: '참여 횟수 차트', fn: () => updateParticipationChart(filteredRecords) },
-                { name: '팀 조합 차트', fn: () => updateTeamComboChart(filteredRecords) },
-                { name: '최약 팀 조합 차트', fn: () => updateWorstTeamComboChart(filteredRecords) }
-            ];
+            // 최약팀 차트를 먼저 업데이트 (디버깅을 위해)
+            try {
+                console.log('최약팀 차트 업데이트 시작');
+                updateWorstTeamComboChart(filteredRecords);
+                console.log('최약팀 차트 업데이트 완료');
+            } catch (error) {
+                console.error('최약팀 차트 오류:', error);
+            }
             
-            chartUpdates.forEach((chart, index) => {
-                setTimeout(() => {
-                    try {
-                        console.log(`${chart.name} 업데이트 시작`);
-                        chart.fn();
-                        console.log(`${chart.name} 업데이트 완료`);
-                    } catch (error) {
-                        console.error(`${chart.name} 오류:`, error);
-                    }
-                }, index * 100); // 각 차트마다 100ms 간격으로 실행
-            });
+            // 다른 차트들도 업데이트
+            setTimeout(() => {
+                try {
+                    console.log('승률 차트 업데이트 시작');
+                    updateWinRateChart(filteredRecords);
+                    console.log('승률 차트 업데이트 완료');
+                } catch (error) {
+                    console.error('승률 차트 오류:', error);
+                }
+            }, 100);
+            
+            setTimeout(() => {
+                try {
+                    console.log('참여 횟수 차트 업데이트 시작');
+                    updateParticipationChart(filteredRecords);
+                    console.log('참여 횟수 차트 업데이트 완료');
+                } catch (error) {
+                    console.error('참여 횟수 차트 오류:', error);
+                }
+            }, 200);
+            
+            setTimeout(() => {
+                try {
+                    console.log('팀 조합 차트 업데이트 시작');
+                    updateTeamComboChart(filteredRecords);
+                    console.log('팀 조합 차트 업데이트 완료');
+                } catch (error) {
+                    console.error('팀 조합 차트 오류:', error);
+                }
+            }, 300);
+            
+            console.log('=== updateAllCharts 완료 ===');
         }
 
         // 승률 차트 업데이트
@@ -4105,7 +4140,6 @@
         function updateWorstTeamComboChart(records) {
             console.log('=== 최약팀 차트 업데이트 시작 ===');
             console.log('전달받은 records 수:', records.length);
-            console.log('records 내용:', records);
             
             const canvas = document.getElementById('worstTeamComboChart');
             if (!canvas) {
@@ -4120,95 +4154,105 @@
                 window.worstTeamComboChart = null;
             }
             
+            // 캔버스 초기화
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 데이터가 없으면 메시지 표시
+            if (!records || records.length === 0) {
+                console.log('게임 기록이 없음');
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('게임 기록이 없습니다', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
             const teamStats = {};
             
             // 팀 통계 계산
             records.forEach((record, index) => {
-                console.log(`레코드 ${index}:`, record);
-                
-                if (!record.groupAMembers || !record.groupBMembers) {
-                    console.warn('잘못된 레코드 (멤버 정보 없음):', record);
-                    return;
-                }
-                
-                if (!record.winner) {
-                    console.warn('잘못된 레코드 (승자 정보 없음):', record);
+                // 기본적인 데이터 검증
+                if (!record || !record.groupAMembers || !record.groupBMembers || !record.winner) {
+                    console.warn(`레코드 ${index} 건너뜀:`, record);
                     return;
                 }
                 
                 const teamA = record.groupAMembers.sort().join(', ');
                 const teamB = record.groupBMembers.sort().join(', ');
                 
-                console.log(`팀A: ${teamA}, 팀B: ${teamB}, 승자: ${record.winner}`);
+                // 팀A 통계
+                if (!teamStats[teamA]) {
+                    teamStats[teamA] = { wins: 0, total: 0 };
+                }
+                teamStats[teamA].total++;
+                if (record.winner === 'A') {
+                    teamStats[teamA].wins++;
+                }
                 
-                [teamA, teamB].forEach(team => {
-                    if (!teamStats[team]) {
-                        teamStats[team] = { wins: 0, total: 0 };
-                    }
-                    teamStats[team].total++;
-                    
-                    if ((team === teamA && record.winner === 'A') || (team === teamB && record.winner === 'B')) {
-                        teamStats[team].wins++;
-                    }
-                });
+                // 팀B 통계
+                if (!teamStats[teamB]) {
+                    teamStats[teamB] = { wins: 0, total: 0 };
+                }
+                teamStats[teamB].total++;
+                if (record.winner === 'B') {
+                    teamStats[teamB].wins++;
+                }
             });
             
             console.log('계산된 팀 통계:', teamStats);
             
-            // 모든 팀을 승률 순으로 정렬 (승률이 낮은 순)
-            const allTeams = Object.entries(teamStats)
-                .map(([team, stats]) => {
-                    const winRate = stats.total > 0 ? stats.wins / stats.total : 0;
-                    return [team, { ...stats, winRate }];
-                })
-                .sort((a, b) => a[1].winRate - b[1].winRate);
-            
-            console.log('승률 순 정렬된 모든 팀:', allTeams);
-            
-            // 최약팀 5개 선택 (최소 1경기 이상)
-            const worstTeams = allTeams
-                .filter(([team, stats]) => stats.total >= 1)
-                .slice(0, 5);
-            
-            console.log('선택된 최약팀 목록:', worstTeams);
-            
-            // 캔버스 초기화
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (worstTeams.length === 0) {
-                console.log('최약팀이 없어서 "데이터 부족" 메시지 표시');
+            // 팀이 없으면 메시지 표시
+            const teamEntries = Object.entries(teamStats);
+            if (teamEntries.length === 0) {
+                console.log('팀 통계가 없음');
                 ctx.fillStyle = '#6b7280';
                 ctx.font = '14px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('데이터가 부족합니다', canvas.width / 2, canvas.height / 2);
+                ctx.fillText('팀 통계가 없습니다', canvas.width / 2, canvas.height / 2);
                 return;
             }
             
+            // 승률 계산 및 정렬
+            const teamsWithWinRate = teamEntries.map(([team, stats]) => {
+                const winRate = stats.total > 0 ? stats.wins / stats.total : 0;
+                return [team, { ...stats, winRate }];
+            });
+            
+            // 승률이 낮은 순으로 정렬 (최약팀)
+            const worstTeams = teamsWithWinRate
+                .sort((a, b) => a[1].winRate - b[1].winRate)
+                .slice(0, 5);
+            
+            console.log('최약팀 목록:', worstTeams);
+            
+            // 차트 데이터 준비
+            const labels = worstTeams.map(([team, stats]) => {
+                const displayName = team.length > 10 ? team.substring(0, 8) + '...' : team;
+                return displayName;
+            });
+            
+            const data = worstTeams.map(([team, stats]) => {
+                const winRate = Math.round(stats.winRate * 100);
+                console.log(`팀 ${team}: 승률 ${winRate}% (${stats.wins}승 ${stats.total - stats.wins}패)`);
+                return winRate;
+            });
+            
+            console.log('차트 라벨:', labels);
+            console.log('차트 데이터:', data);
+            
             try {
-                const chartData = {
-                    labels: worstTeams.map(([team, stats]) => {
-                        // 팀명이 너무 길면 줄임
-                        const displayName = team.length > 12 ? team.substring(0, 10) + '...' : team;
-                        return `${displayName}`;
-                    }),
-                    datasets: [{
-                        label: '승률',
-                        data: worstTeams.map(([team, stats]) => {
-                            const winRate = Math.round(stats.winRate * 100);
-                            console.log(`팀 ${team}: 승률 ${winRate}% (${stats.wins}승 ${stats.total - stats.wins}패)`);
-                            return winRate;
-                        }),
-                        backgroundColor: '#ef4444',
-                        borderColor: '#dc2626',
-                        borderWidth: 1
-                    }]
-                };
-                
-                console.log('차트 데이터:', chartData);
-                
                 window.worstTeamComboChart = new Chart(ctx, {
                     type: 'bar',
-                    data: chartData,
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '승률',
+                            data: data,
+                            backgroundColor: '#ef4444',
+                            borderColor: '#dc2626',
+                            borderWidth: 1
+                        }]
+                    },
                     options: {
                         indexAxis: 'y',
                         responsive: true,
@@ -4250,10 +4294,33 @@
                 ctx.fillStyle = '#ef4444';
                 ctx.font = '14px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('차트 생성 오류', canvas.width / 2, canvas.height / 2);
+                ctx.fillText('차트 생성 오류: ' + error.message, canvas.width / 2, canvas.height / 2);
             }
             
             console.log('=== 최약팀 차트 업데이트 완료 ===');
+        }
+
+        // 최약팀 차트 테스트 함수 (디버깅용)
+        function testWorstTeamChart() {
+            console.log('=== 최약팀 차트 테스트 시작 ===');
+            console.log('전체 게임 기록:', gameRecords);
+            console.log('전체 게임 기록 수:', gameRecords.length);
+            
+            if (gameRecords.length === 0) {
+                console.log('게임 기록이 없습니다!');
+                return;
+            }
+            
+            // 간단한 테스트 데이터로 차트 그리기
+            const testData = [
+                { groupAMembers: ['김철수', '이영희'], groupBMembers: ['박민수', '최지영'], winner: 'A' },
+                { groupAMembers: ['김철수', '이영희'], groupBMembers: ['박민수', '최지영'], winner: 'B' },
+                { groupAMembers: ['김철수', '이영희'], groupBMembers: ['박민수', '최지영'], winner: 'A' }
+            ];
+            
+            console.log('테스트 데이터로 차트 그리기:', testData);
+            updateWorstTeamComboChart(testData);
+            console.log('=== 최약팀 차트 테스트 완료 ===');
         }
 
         // 참여 횟수 차트 업데이트
