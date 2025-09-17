@@ -996,44 +996,57 @@
         /* 시상식 반응형 스타일 */
         @media (max-width: 768px) {
             .medal-podium {
-                height: 180px;
-                gap: 6px;
+                height: 200px;
+                gap: 8px;
+                padding: 10px;
             }
             
             .podium-place {
-                min-width: 70px;
-                padding: 12px 6px 16px;
+                min-width: 80px;
+                padding: 8px 4px 12px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
             }
             
             .podium-place.first {
-                height: 140px;
+                height: 160px;
             }
             
             .podium-place.second {
-                height: 120px;
+                height: 140px;
             }
             
             .podium-place.third {
-                height: 100px;
+                height: 120px;
             }
             
             .medal {
-                font-size: 28px;
+                font-size: 24px;
+                margin-bottom: 4px;
             }
             
             .player-name {
-                font-size: 14px;
-                font-weight: 600;
-                line-height: 1.2;
+                font-size: 11px;
+                font-weight: 500;
+                line-height: 1.1;
                 word-break: keep-all;
                 overflow-wrap: break-word;
                 max-width: 100%;
                 text-align: center;
+                margin: 2px 0;
+                padding: 0 2px;
+                min-height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             
             .player-score {
-                font-size: 11px;
-                line-height: 1.1;
+                font-size: 9px;
+                line-height: 1.0;
+                margin-top: 2px;
             }
             
             .rank-row {
@@ -2039,7 +2052,7 @@
                     <h1>피클볼 스코어 트래커<span class="title-emoji">🎾</span></h1>
                 </div>
                 <div class="header-right">
-                    <div class="version-info">v1.0.6</div>
+                    <div class="version-info">v1.0.7</div>
                 </div>
             </div>
 
@@ -3891,7 +3904,9 @@
 
         // 통계 페이지 렌더링
         function renderAnalyticsPage() {
-            console.log('renderAnalyticsPage 호출됨');
+            console.log('=== 통계 페이지 렌더링 시작 ===');
+            console.log('현재 게임 기록 수:', gameRecords.length);
+            console.log('현재 멤버 수:', members.length);
             
             // Chart.js 라이브러리 확인
             if (typeof Chart === 'undefined') {
@@ -3927,7 +3942,7 @@
                 } catch (error) {
                     console.error('차트 업데이트 오류:', error);
                 }
-            }, 100);
+            }, 200); // 시간을 조금 더 늘림
         }
 
         // 통계 기간 선택
@@ -3949,6 +3964,9 @@
             const activeTab = document.querySelector('#analytics-page .period-tab.active');
             const selectedPeriod = activeTab ? activeTab.getAttribute('data-period') : 'today';
             
+            console.log('선택된 기간:', selectedPeriod);
+            console.log('전체 게임 기록 수:', gameRecords.length);
+            
             let filtered = [...gameRecords];
             const now = new Date();
             
@@ -3959,17 +3977,24 @@
                     const recordDate = new Date(record.date);
                     return recordDate >= today && recordDate < tomorrow;
                 });
+                console.log('오늘 필터링 후:', filtered.length);
             } else if (selectedPeriod === '1week') {
                 const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
                 filtered = filtered.filter(record => new Date(record.date) >= oneWeekAgo);
+                console.log('1주 필터링 후:', filtered.length);
             } else if (selectedPeriod === '2week') {
                 const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
                 filtered = filtered.filter(record => new Date(record.date) >= twoWeeksAgo);
+                console.log('2주 필터링 후:', filtered.length);
             } else if (selectedPeriod === 'month') {
                 const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
                 filtered = filtered.filter(record => new Date(record.date) >= thirtyDaysAgo);
+                console.log('한달 필터링 후:', filtered.length);
+            } else if (selectedPeriod === 'all') {
+                console.log('전체 기간 선택 - 필터링 없음:', filtered.length);
             }
             
+            console.log('최종 필터링된 기록:', filtered);
             return filtered;
         }
 
@@ -4078,7 +4103,9 @@
 
         // 최약 팀 조합 차트 업데이트
         function updateWorstTeamComboChart(records) {
-            console.log('updateWorstTeamComboChart 호출됨, records:', records.length);
+            console.log('=== 최약팀 차트 업데이트 시작 ===');
+            console.log('전달받은 records 수:', records.length);
+            console.log('records 내용:', records);
             
             const canvas = document.getElementById('worstTeamComboChart');
             if (!canvas) {
@@ -4096,14 +4123,23 @@
             const teamStats = {};
             
             // 팀 통계 계산
-            records.forEach(record => {
+            records.forEach((record, index) => {
+                console.log(`레코드 ${index}:`, record);
+                
                 if (!record.groupAMembers || !record.groupBMembers) {
-                    console.warn('잘못된 레코드:', record);
+                    console.warn('잘못된 레코드 (멤버 정보 없음):', record);
+                    return;
+                }
+                
+                if (!record.winner) {
+                    console.warn('잘못된 레코드 (승자 정보 없음):', record);
                     return;
                 }
                 
                 const teamA = record.groupAMembers.sort().join(', ');
                 const teamB = record.groupBMembers.sort().join(', ');
+                
+                console.log(`팀A: ${teamA}, 팀B: ${teamB}, 승자: ${record.winner}`);
                 
                 [teamA, teamB].forEach(team => {
                     if (!teamStats[team]) {
@@ -4117,24 +4153,30 @@
                 });
             });
             
-            console.log('팀 통계:', teamStats);
+            console.log('계산된 팀 통계:', teamStats);
             
-            // 최약팀 필터링 (최소 1경기 이상으로 완화)
-            const worstTeams = Object.entries(teamStats)
-                .filter(([team, stats]) => stats.total >= 1)
-                .sort((a, b) => {
-                    const winRateA = a[1].total > 0 ? a[1].wins / a[1].total : 0;
-                    const winRateB = b[1].total > 0 ? b[1].wins / b[1].total : 0;
-                    return winRateA - winRateB;
+            // 모든 팀을 승률 순으로 정렬 (승률이 낮은 순)
+            const allTeams = Object.entries(teamStats)
+                .map(([team, stats]) => {
+                    const winRate = stats.total > 0 ? stats.wins / stats.total : 0;
+                    return [team, { ...stats, winRate }];
                 })
+                .sort((a, b) => a[1].winRate - b[1].winRate);
+            
+            console.log('승률 순 정렬된 모든 팀:', allTeams);
+            
+            // 최약팀 5개 선택 (최소 1경기 이상)
+            const worstTeams = allTeams
+                .filter(([team, stats]) => stats.total >= 1)
                 .slice(0, 5);
             
-            console.log('최약팀 목록:', worstTeams);
+            console.log('선택된 최약팀 목록:', worstTeams);
             
             // 캔버스 초기화
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             if (worstTeams.length === 0) {
+                console.log('최약팀이 없어서 "데이터 부족" 메시지 표시');
                 ctx.fillStyle = '#6b7280';
                 ctx.font = '14px Arial';
                 ctx.textAlign = 'center';
@@ -4143,25 +4185,30 @@
             }
             
             try {
+                const chartData = {
+                    labels: worstTeams.map(([team, stats]) => {
+                        // 팀명이 너무 길면 줄임
+                        const displayName = team.length > 12 ? team.substring(0, 10) + '...' : team;
+                        return `${displayName}`;
+                    }),
+                    datasets: [{
+                        label: '승률',
+                        data: worstTeams.map(([team, stats]) => {
+                            const winRate = Math.round(stats.winRate * 100);
+                            console.log(`팀 ${team}: 승률 ${winRate}% (${stats.wins}승 ${stats.total - stats.wins}패)`);
+                            return winRate;
+                        }),
+                        backgroundColor: '#ef4444',
+                        borderColor: '#dc2626',
+                        borderWidth: 1
+                    }]
+                };
+                
+                console.log('차트 데이터:', chartData);
+                
                 window.worstTeamComboChart = new Chart(ctx, {
                     type: 'bar',
-                    data: {
-                        labels: worstTeams.map(([team, stats]) => {
-                            // 팀명이 너무 길면 줄임
-                            const displayName = team.length > 15 ? team.substring(0, 12) + '...' : team;
-                            return `${displayName} (${stats.total}경기)`;
-                        }),
-                        datasets: [{
-                            label: '승률',
-                            data: worstTeams.map(([team, stats]) => {
-                                const winRate = stats.total > 0 ? Math.round(stats.wins / stats.total * 100) : 0;
-                                return winRate;
-                            }),
-                            backgroundColor: '#ef4444',
-                            borderColor: '#dc2626',
-                            borderWidth: 1
-                        }]
-                    },
+                    data: chartData,
                     options: {
                         indexAxis: 'y',
                         responsive: true,
@@ -4205,6 +4252,8 @@
                 ctx.textAlign = 'center';
                 ctx.fillText('차트 생성 오류', canvas.width / 2, canvas.height / 2);
             }
+            
+            console.log('=== 최약팀 차트 업데이트 완료 ===');
         }
 
         // 참여 횟수 차트 업데이트
