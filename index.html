@@ -541,10 +541,9 @@
             transform: translateY(-50%);
             background: rgba(0, 0, 0, 0.9);
             color: white;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 6px;
             font-size: 11px;
-            white-space: nowrap;
             z-index: 1000;
             margin-left: 8px;
             opacity: 0;
@@ -552,9 +551,12 @@
             transition: all 0.2s ease;
             pointer-events: none;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            max-width: 200px;
+            max-width: 250px;
+            min-width: 150px;
             white-space: normal;
             text-align: left;
+            line-height: 1.3;
+            word-wrap: break-word;
         }
 
         .badge-tooltip::after {
@@ -3016,7 +3018,7 @@
                                     ${badges[badge].emoji}
                                     <div class="badge-tooltip">
                                         <strong>${badges[badge].name}</strong><br>
-                                        ${badges[badge].description}
+                                        ${badges[badge].description.replace(/\([^)]*\)/g, '').trim()}
                                     </div>
                                 </div>
                             ` : '').join('')}
@@ -3063,7 +3065,7 @@
                                     ${badges[badge].emoji}
                                     <div class="badge-tooltip">
                                         <strong>${badges[badge].name}</strong><br>
-                                        ${badges[badge].description}
+                                        ${badges[badge].description.replace(/\([^)]*\)/g, '').trim()}
                                     </div>
                                 </div>
                             ` : '').join('')}
@@ -3523,15 +3525,15 @@
 
         // 훈장 시스템 정의
         const badges = {
-            medal: { emoji: '🏅', name: '메달', description: '5연승 이상 기록한 선수' },
-            perfectionist: { emoji: '💯', name: '완벽주의자', description: '10연승 달성한 선수' },
-            diamond: { emoji: '💎', name: '다이아몬드', description: '10경기 이상, 승률 70% 이상 달성한 선수' },
-            crown: { emoji: '👑', name: '왕관', description: '10경기 이상, 승률 90% 이상 달성한 선수' },
-            struggle: { emoji: '😅', name: '분발', description: '10경기 이상, 승률 30% 미만인 선수 (분발이 필요합니다!)' },
-            challenge: { emoji: '🥶', name: '도전', description: '10경기 이상, 승률 10% 미만인 선수 (더 많은 연습이 필요합니다!)' },
+            medal: { emoji: '🏅', name: '메달', description: '5연승 이상 기록' },
+            perfectionist: { emoji: '💯', name: '완벽주의자', description: '10연승 달성' },
+            diamond: { emoji: '💎', name: '다이아몬드', description: '10경기 이상, 승률 70% 이상' },
+            crown: { emoji: '👑', name: '왕관', description: '10경기 이상, 승률 90% 이상' },
+            struggle: { emoji: '😅', name: '분발', description: '10경기 이상, 승률 30% 미만' },
+            challenge: { emoji: '🥶', name: '도전', description: '10경기 이상, 승률 10% 미만' },
             // 새로운 의미있는 훈장들
-            veteran: { emoji: '🎖️', name: '베테랑', description: '50경기 이상 참여한 선수' },
-            fighter: { emoji: '🥊', name: '파이터', description: '연패 중에도 포기하지 않는 선수 (5연패 이상)' }
+            veteran: { emoji: '🎖️', name: '베테랑', description: '50경기 이상 참여' },
+            fighter: { emoji: '🥊', name: '파이터', description: '5연패 이상에도 포기하지 않음' }
         };
 
         // 피클볼 스타일 계급 시스템 정의 (단일 이모티콘)
